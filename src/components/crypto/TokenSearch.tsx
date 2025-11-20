@@ -35,7 +35,7 @@ export function TokenSearch({ onTokenSelect, selectedCategory = 'All', onCategor
           placeholder="Search tokens by name or symbol..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-3 pl-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="w-full px-4 py-3 pl-12 rounded-xl border border-brand-purple-900/50 bg-brand-bg-card text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500"
         />
         <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +45,7 @@ export function TokenSearch({ onTokenSelect, selectedCategory = 'All', onCategor
         {searchQuery && (
           <button
             onClick={() => setSearchQuery('')}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -60,10 +60,10 @@ export function TokenSearch({ onTokenSelect, selectedCategory = 'All', onCategor
           <button
             key={category}
             onClick={() => onCategoryChange?.(category)}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
+            className={`px-4 py-2 rounded-xl font-medium whitespace-nowrap transition-all ${
               selectedCategory === category
-                ? 'bg-purple-600 text-white shadow-lg'
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'
+                ? 'bg-gradient-purple text-white shadow-glow-purple'
+                : 'bg-brand-bg-card border border-brand-purple-900/50 text-gray-300 hover:bg-brand-bg-tertiary'
             }`}
           >
             {category}
@@ -73,14 +73,14 @@ export function TokenSearch({ onTokenSelect, selectedCategory = 'All', onCategor
 
       {/* Results */}
       <div>
-        <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+        <div className="text-sm text-gray-400 mb-3">
           {filteredTokens.length} {filteredTokens.length === 1 ? 'token' : 'tokens'} found
         </div>
 
         {filteredTokens.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <div className="text-center py-12 bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl">
             <div className="text-4xl mb-2">🔍</div>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-400">
               No tokens found matching your search
             </p>
           </div>
@@ -90,24 +90,24 @@ export function TokenSearch({ onTokenSelect, selectedCategory = 'All', onCategor
               <button
                 key={token.symbol}
                 onClick={() => onTokenSelect?.(token)}
-                className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 hover:shadow-lg transition-all text-left group"
+                className="flex items-center gap-3 p-4 bg-brand-bg-card rounded-xl border border-brand-purple-900/50 hover:border-brand-purple-500 hover:shadow-glow-purple transition-all text-left group"
               >
                 <span className="text-3xl">{token.icon}</span>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                  <div className="font-semibold text-white group-hover:text-brand-purple-400 transition-colors">
                     {token.symbol}
                   </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                  <div className="text-xs text-gray-400 truncate">
                     {token.name}
                   </div>
                   <div className="mt-1">
-                    <span className="inline-block px-2 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                    <span className="inline-block px-2 py-0.5 text-xs rounded-lg bg-brand-bg-secondary text-gray-400 border border-brand-purple-900/30">
                       {token.category}
                     </span>
                   </div>
                 </div>
                 <svg
-                  className="w-5 h-5 text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors"
+                  className="w-5 h-5 text-gray-400 group-hover:text-brand-purple-400 transition-colors"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -146,19 +146,19 @@ export function TokenSelector({ value, onChange }: { value?: string; onChange?: 
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center justify-between"
+        className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-card text-white focus:outline-none focus:ring-2 focus:ring-brand-purple-500 flex items-center justify-between hover:border-brand-purple-500 transition-colors"
       >
         {selectedToken ? (
           <span className="flex items-center gap-2">
             <span className="text-2xl">{selectedToken.icon}</span>
             <span className="font-medium">{selectedToken.symbol}</span>
-            <span className="text-sm text-gray-500">- {selectedToken.name}</span>
+            <span className="text-sm text-gray-400">- {selectedToken.name}</span>
           </span>
         ) : (
-          <span className="text-gray-500">Select a token...</span>
+          <span className="text-gray-400">Select a token...</span>
         )}
         <svg
-          className={`w-5 h-5 transition-transform ${isOpen ? 'transform rotate-180' : ''}`}
+          className={`w-5 h-5 transition-transform text-gray-400 ${isOpen ? 'transform rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -168,24 +168,24 @@ export function TokenSelector({ value, onChange }: { value?: string; onChange?: 
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 max-h-96 overflow-auto">
-          <div className="p-3 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800">
+        <div className="absolute z-50 w-full mt-2 bg-brand-bg-secondary rounded-xl shadow-glow-purple-lg border border-brand-purple-900/50 max-h-96 overflow-auto">
+          <div className="p-3 border-b border-brand-purple-900/50 sticky top-0 bg-brand-bg-secondary">
             <input
               type="text"
               placeholder="Search tokens..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 rounded-lg border border-brand-purple-900/50 bg-brand-bg-card text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple-500 placeholder-gray-400"
             />
             <div className="flex gap-1 mt-2 overflow-x-auto">
               {['All', 'Featured', 'DeFi', 'Base Ecosystem', 'Stablecoin'].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setCategory(cat as TokenCategory)}
-                  className={`px-2 py-1 rounded text-xs whitespace-nowrap ${
+                  className={`px-2 py-1 rounded-lg text-xs whitespace-nowrap transition-colors ${
                     category === cat
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                      ? 'bg-gradient-purple text-white'
+                      : 'bg-brand-bg-card border border-brand-purple-900/50 text-gray-400 hover:bg-brand-bg-tertiary'
                   }`}
                 >
                   {cat}
@@ -203,14 +203,14 @@ export function TokenSelector({ value, onChange }: { value?: string; onChange?: 
                   setIsOpen(false);
                   setSearch('');
                 }}
-                className="w-full flex items-center gap-3 p-3 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left"
+                className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-brand-bg-tertiary transition-colors text-left"
               >
                 <span className="text-2xl">{token.icon}</span>
                 <div className="flex-1">
-                  <div className="font-medium text-gray-900 dark:text-gray-100">{token.symbol}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">{token.name}</div>
+                  <div className="font-medium text-white">{token.symbol}</div>
+                  <div className="text-xs text-gray-400">{token.name}</div>
                 </div>
-                <span className="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                <span className="text-xs px-2 py-1 rounded-lg bg-brand-bg-card border border-brand-purple-900/30 text-gray-400">
                   {token.category}
                 </span>
               </button>
