@@ -22,15 +22,15 @@ export default function LandingPage() {
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <Link href="/wagers" className="hover:text-brand-purple-500 transition-colors">
+              <a href="#pvp-wagers" className="hover:text-brand-purple-500 transition-colors cursor-pointer">
                 PVP Wagers
-              </Link>
-              <Link href="/crypto" className="hover:text-brand-purple-500 transition-colors">
+              </a>
+              <a href="#market-betting" className="hover:text-brand-purple-500 transition-colors cursor-pointer">
                 Market Betting
-              </Link>
-              <Link href="#features" className="hover:text-brand-purple-500 transition-colors">
+              </a>
+              <a href="#features" className="hover:text-brand-purple-500 transition-colors cursor-pointer">
                 Features
-              </Link>
+              </a>
             </nav>
 
             {/* Auth Buttons */}
@@ -179,7 +179,7 @@ export default function LandingPage() {
       </section>
 
       {/* PVP Wagers Section */}
-      <section className="py-20 px-6">
+      <section id="pvp-wagers" className="py-20 px-6 scroll-mt-20">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-bg-card border border-brand-purple-800 mb-4">
@@ -304,7 +304,7 @@ export default function LandingPage() {
       </section>
 
       {/* Crypto Market Betting Section */}
-      <section className="py-20 px-6 bg-brand-bg-secondary/30">
+      <section id="market-betting" className="py-20 px-6 bg-brand-bg-secondary/30 scroll-mt-20">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-bg-card border border-brand-purple-800 mb-4">
@@ -470,7 +470,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-6">
+      <section id="features" className="py-20 px-6 scroll-mt-20">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
