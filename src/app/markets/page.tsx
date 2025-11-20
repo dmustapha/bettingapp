@@ -1,288 +1,435 @@
 'use client';
 
 import Link from 'next/link';
-import { MainNav } from '@/components/layout/MainNav';
-import { Footer } from '@/components';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-indigo-900/20">
-      <MainNav />
+    <div className="min-h-screen bg-gradient-dark text-white">
+      {/* Navigation Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-brand-bg-primary/80 backdrop-blur-lg border-b border-brand-purple-900/30">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            {/* Logo */}
+            <Link href="/markets" className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-purple flex items-center justify-center font-bold text-xl">
+                B
+              </div>
+              <span className="text-2xl font-bold">CryptoWager</span>
+            </Link>
 
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="container mx-auto px-4 py-16 md:py-24">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="mb-6">
-              <span className="inline-block px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 text-sm font-semibold mb-4">
-                Decentralized Betting Platform
-              </span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-              Bet on the Future
-              <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Win Big
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              The next-generation prediction platform powered by blockchain. Trade your insights on crypto prices or create custom peer-to-peer wagers.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link
-                href="#features"
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-              >
-                Explore Platforms
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center gap-8">
+              <Link href="/wagers" className="hover:text-brand-purple-500 transition-colors">
+                PVP Wagers
               </Link>
-              <a
-                href="https://github.com/dmz4pf/bettingapp"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-8 py-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-bold rounded-xl transition-all shadow-lg border-2 border-gray-200 dark:border-gray-700"
-              >
-                View on GitHub
-              </a>
+              <Link href="/crypto" className="hover:text-brand-purple-500 transition-colors">
+                Market Betting
+              </Link>
+              <Link href="#features" className="hover:text-brand-purple-500 transition-colors">
+                Features
+              </Link>
+            </nav>
+
+            {/* Auth Buttons */}
+            <div className="flex items-center gap-4">
+              <button className="hidden md:block hover:text-brand-purple-500 transition-colors">
+                Sign In
+              </button>
+              <ConnectButton />
             </div>
           </div>
-        </section>
+        </div>
+      </header>
 
-        {/* Features Section */}
-        <section id="features" className="container mx-auto px-4 py-16">
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-brand-purple-500 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-brand-magenta-500 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="container mx-auto relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left side - Content */}
+            <div>
+              <div className="inline-block px-4 py-2 rounded-full bg-brand-bg-card border border-brand-purple-800 mb-6">
+                <span className="text-sm">🔥 Decentralized Betting Platform</span>
+              </div>
+
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                Bet Smart,
+                <span className="block bg-gradient-purple bg-clip-text text-transparent">
+                  Win Big
+                </span>
+              </h1>
+
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+                The ultimate crypto betting platform. Challenge opponents in PVP wagers or predict market movements. Transparent, secure, and built on blockchain technology.
+              </p>
+
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/crypto"
+                  className="px-8 py-4 bg-gradient-purple rounded-xl font-semibold hover:shadow-glow-purple transition-all transform hover:-translate-y-1"
+                >
+                  Start Betting →
+                </Link>
+                <Link
+                  href="#features"
+                  className="px-8 py-4 border-2 border-brand-purple-500 rounded-xl font-semibold hover:bg-brand-purple-500/10 transition-all"
+                >
+                  Learn More
+                </Link>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
+                <div>
+                  <div className="text-3xl font-bold text-brand-purple-500">50K+</div>
+                  <div className="text-sm text-gray-400">Active Users</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-brand-purple-500">$10M+</div>
+                  <div className="text-sm text-gray-400">Total Wagered</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-brand-purple-500">99.9%</div>
+                  <div className="text-sm text-gray-400">Uptime</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-brand-purple-500">100%</div>
+                  <div className="text-sm text-gray-400">Secure Transactions</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right side - Floating stat cards */}
+            <div className="hidden lg:block relative">
+              <div className="space-y-4">
+                {/* BTC Card */}
+                <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center text-2xl">
+                        ₿
+                      </div>
+                      <div>
+                        <div className="font-semibold">Bitcoin</div>
+                        <div className="text-2xl font-bold">$45,234</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-brand-success font-semibold">+2.5%</div>
+                      <div className="text-sm text-gray-400">24h</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ETH Card */}
+                <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all ml-12">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-2xl">
+                        ⟠
+                      </div>
+                      <div>
+                        <div className="font-semibold">Ethereum</div>
+                        <div className="text-2xl font-bold">$2,344</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-brand-error font-semibold">-1.2%</div>
+                      <div className="text-sm text-gray-400">24h</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SOL Card */}
+                <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center font-bold">
+                        SOL
+                      </div>
+                      <div>
+                        <div className="font-semibold">Solana</div>
+                        <div className="text-2xl font-bold">$98.45</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-brand-error font-semibold">-2.1%</div>
+                      <div className="text-sm text-gray-400">24h</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 px-6 bg-brand-bg-secondary/50">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: '📊', value: '$50M+', label: 'Total Wagered', color: 'from-orange-500 to-yellow-500' },
+              { icon: '🎮', value: '100K+', label: 'Wagers Settled', color: 'from-pink-500 to-purple-500' },
+              { icon: '⚡', value: '<5s', label: 'Avg Settlement Time', color: 'from-cyan-500 to-blue-500' },
+              { icon: '🔒', value: '100%', label: 'Secure Transactions', color: 'from-green-500 to-emerald-500' },
+            ].map((stat, i) => (
+              <div key={i} className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
+                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-3xl mb-4`}>
+                  {stat.icon}
+                </div>
+                <div className="text-3xl font-bold mb-1">{stat.value}</div>
+                <div className="text-gray-400">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PVP Wagers Section */}
+      <section className="py-20 px-6">
+        <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Choose Your Platform
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-bg-card border border-brand-purple-800 mb-4">
+              <span className="text-sm">🎯 Player vs Player</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              PVP Wagers
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Two powerful ways to bet on your predictions
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Challenge other players directly. Create or join wagers and prove your prediction skills.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {/* Crypto Predictions Card */}
-            <Link href="/crypto">
-              <div className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-purple-500 transform hover:-translate-y-2">
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-pink-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-                <div className="relative p-8">
-                  {/* Icon */}
-                  <div className="mb-6 flex items-center justify-between">
-                    <div className="p-4 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl">
-                      <span className="text-5xl">📈</span>
-                    </div>
-                    <div className="px-3 py-1 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 text-xs font-bold rounded-full">
-                      POPULAR
-                    </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {[
+              { icon: '🪙', name: 'Coin Flip', desc: 'Simple 50/50 chance. Winner takes all.', color: 'from-orange-500 to-yellow-500' },
+              { icon: '🎲', name: 'Dice Roll', desc: 'Roll the dice, higher number wins.', color: 'from-pink-500 to-red-500' },
+              { icon: '⚔️', name: 'Price Battle', desc: 'Predict if crypto goes up or down.', color: 'from-green-500 to-emerald-500' },
+              { icon: '✨', name: 'Custom Wager', desc: 'Create your own betting challenge.', color: 'from-purple-500 to-pink-500' },
+            ].map((game, i) => (
+              <Link key={i} href="/wagers" className="group">
+                <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all h-full">
+                  <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${game.color} flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform`}>
+                    {game.icon}
                   </div>
-
-                  {/* Content */}
-                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                    Crypto Predictions
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                    Trade on cryptocurrency price movements with real-time charts and live prices. Predict whether ETH, BTC, or 20+ Base chain tokens will go up or down.
-                  </p>
-
-                  {/* Features List */}
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-purple-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Live price charts & data
-                    </li>
-                    <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-purple-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      20+ Base chain tokens
-                    </li>
-                    <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-purple-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Chainlink oracles
-                    </li>
-                    <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-purple-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Auto-resolved markets
-                    </li>
-                  </ul>
-
-                  {/* CTA */}
-                  <div className="flex items-center text-purple-600 dark:text-purple-400 font-semibold group-hover:gap-3 gap-2 transition-all">
-                    <span>Start Predicting</span>
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  <h3 className="text-xl font-bold mb-2">{game.name}</h3>
+                  <p className="text-gray-400 text-sm mb-4">{game.desc}</p>
+                  <div className="flex items-center text-brand-purple-500 font-semibold">
+                    <span>Play Now</span>
+                    <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
                 </div>
-              </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link href="/wagers" className="inline-block px-8 py-4 bg-gradient-purple rounded-xl font-semibold hover:shadow-glow-purple transition-all">
+              View All Wagers
             </Link>
+          </div>
+        </div>
+      </section>
 
-            {/* P2P Wagers Card */}
-            <Link href="/wagers">
-              <div className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-blue-500 transform hover:-translate-y-2">
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      {/* Crypto Market Betting Section */}
+      <section className="py-20 px-6 bg-brand-bg-secondary/30">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-bg-card border border-brand-purple-800 mb-4">
+              <span className="text-sm">📈 Market Predictions</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Crypto Market Betting
+            </h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Predict market movements and earn rewards. Will the price go up or down? Place your bet and watch the action unfold!
+            </p>
+          </div>
 
-                <div className="relative p-8">
-                  {/* Icon */}
-                  <div className="mb-6 flex items-center justify-between">
-                    <div className="p-4 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-xl">
-                      <span className="text-5xl">🤝</span>
-                    </div>
-                    <div className="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 text-xs font-bold rounded-full">
-                      CUSTOM
-                    </div>
+          <div className="max-w-4xl mx-auto mb-12">
+            <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center font-bold text-2xl">
+                    ₿
                   </div>
-
-                  {/* Content */}
-                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                    P2P Wagers
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                    Create custom peer-to-peer bets on anything. Challenge friends or accept open wagers from the community. Your terms, your stakes.
-                  </p>
-
-                  {/* Features List */}
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Custom bet terms
-                    </li>
-                    <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Direct challenges
-                    </li>
-                    <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Open to community
-                    </li>
-                    <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Trustless escrow
-                    </li>
-                  </ul>
-
-                  {/* CTA */}
-                  <div className="flex items-center text-blue-600 dark:text-blue-400 font-semibold group-hover:gap-3 gap-2 transition-all">
-                    <span>Create Wager</span>
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
+                  <div>
+                    <div className="text-2xl font-bold">Bitcoin</div>
+                    <div className="text-3xl font-bold">$45,234.50</div>
                   </div>
                 </div>
+                <div className="text-right">
+                  <div className="text-brand-success text-2xl font-bold">+2%</div>
+                  <div className="text-sm text-gray-400">Expires in 2h 15m</div>
+                </div>
               </div>
+
+              {/* Bull vs Bear Progress */}
+              <div className="mb-6">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-brand-success">🐂 Bull 65%</span>
+                  <span className="text-brand-error">🐻 Bear 35%</span>
+                </div>
+                <div className="h-3 bg-brand-bg-secondary rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-brand-success to-green-400" style={{ width: '65%' }}></div>
+                </div>
+              </div>
+
+              {/* Bet Buttons */}
+              <div className="grid grid-cols-2 gap-4">
+                <Link href="/crypto" className="py-4 bg-brand-success/20 border-2 border-brand-success rounded-xl font-semibold text-center hover:bg-brand-success/30 transition-all">
+                  📈 Bet Bull
+                </Link>
+                <Link href="/crypto" className="py-4 bg-brand-error/20 border-2 border-brand-error rounded-xl font-semibold text-center hover:bg-brand-error/30 transition-all">
+                  📉 Bet Bear
+                </Link>
+              </div>
+
+              <div className="mt-4 text-center text-sm text-gray-400">
+                24h Volume: $2.3B
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link href="/crypto" className="inline-block px-8 py-4 bg-gradient-purple rounded-xl font-semibold hover:shadow-glow-purple transition-all">
+              View All Markets
             </Link>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Stats Section */}
-        <section className="container mx-auto px-4 py-16">
-          <div className="max-w-5xl mx-auto bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-2xl p-8 md:p-12">
-            <div className="grid md:grid-cols-3 gap-8 text-center text-white">
-              <div>
-                <div className="text-4xl md:text-5xl font-bold mb-2">20+</div>
-                <div className="text-purple-100 text-lg">Supported Tokens</div>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-bold mb-2">100%</div>
-                <div className="text-purple-100 text-lg">Decentralized</div>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-bold mb-2">0%</div>
-                <div className="text-purple-100 text-lg">Platform Fees*</div>
-              </div>
-            </div>
-            <p className="text-center text-purple-100 text-sm mt-6">
-              *Only gas fees apply. No hidden charges.
-            </p>
-          </div>
-        </section>
-
-        {/* How It Works Section */}
-        <section className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              How It Works
+      {/* Features Section */}
+      <section id="features" className="py-20 px-6">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Why Choose CryptoWager?
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              Get started in three simple steps
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Built on blockchain technology for maximum security, transparency, and fairness.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">1</span>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { icon: '✅', title: 'Provably Fair', desc: 'All outcomes are verifiable on-chain. Smart contracts ensure complete transparency and fairness.', color: 'from-green-500 to-emerald-500' },
+              { icon: '⚡', title: 'Instant Settlements', desc: 'Winners receive payouts immediately. No waiting, no delays, just instant crypto rewards.', color: 'from-orange-500 to-yellow-500' },
+              { icon: '🔒', title: 'Secure & Trustless', desc: 'Your funds are protected by battle-tested smart contracts. Non-custodial, always in your control.', color: 'from-blue-500 to-cyan-500' },
+              { icon: '💰', title: 'Low Fees', desc: 'Only 2% platform fee on winnings. Keep more of your profits with transparent pricing.', color: 'from-pink-500 to-purple-500' },
+              { icon: '👥', title: 'Community Driven', desc: 'Join thousands of bettors worldwide. Chat, compete, and build your reputation on-chain.', color: 'from-red-500 to-pink-500' },
+              { icon: '🎁', title: 'Rewards Program', desc: 'Earn loyalty points with every bet. Unlock exclusive perks and cashback rewards.', color: 'from-purple-500 to-indigo-500' },
+            ].map((feature, i) => (
+              <div key={i} className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
+                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-3xl mb-4`}>
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                <p className="text-gray-400">{feature.desc}</p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Connect Wallet</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Connect your Web3 wallet to get started on Base network
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">2</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Choose Platform</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Select Crypto Predictions or P2P Wagers based on your preference
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">3</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Place Your Bet</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Make predictions and win big when you're right
-              </p>
-            </div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* CTA Section */}
-        <section className="container mx-auto px-4 py-16 mb-16">
-          <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12 text-center border-2 border-purple-200 dark:border-purple-800">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Ready to Get Started?
+      {/* CTA Section */}
+      <section className="py-20 px-6">
+        <div className="container mx-auto">
+          <div className="max-w-4xl mx-auto bg-gradient-purple rounded-3xl p-12 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Ready to Start Winning?
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
-              Join the decentralized prediction market revolution. Trade on your insights and win big.
+            <p className="text-xl mb-8 opacity-90">
+              Join thousands of players already making profits on CryptoWager. Connect your wallet and start betting in seconds.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/crypto"
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-xl transition-all shadow-lg"
-              >
-                Crypto Predictions
-              </Link>
-              <Link
-                href="/wagers"
-                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold rounded-xl transition-all shadow-lg"
-              >
-                P2P Wagers
+            <div className="flex flex-wrap gap-4 justify-center">
+              <button className="px-8 py-4 bg-white text-brand-purple-500 rounded-xl font-bold hover:bg-gray-100 transition-all">
+                Connect Wallet
+              </button>
+              <Link href="#features" className="px-8 py-4 border-2 border-white rounded-xl font-semibold hover:bg-white/10 transition-all">
+                View Documentation
               </Link>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
 
-      <Footer />
+      {/* Footer */}
+      <footer className="bg-brand-bg-secondary border-t border-brand-purple-900/30 py-12 px-6">
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            {/* Logo & Description */}
+            <div className="md:col-span-1">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-purple flex items-center justify-center font-bold text-xl">
+                  B
+                </div>
+                <span className="text-xl font-bold">CryptoWager</span>
+              </div>
+              <p className="text-gray-400 text-sm mb-4">
+                The future of decentralized betting. Fair, transparent, and secure.
+              </p>
+              <div className="flex gap-4">
+                <a href="#" className="text-gray-400 hover:text-brand-purple-500">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path></svg>
+                </a>
+                <a href="#" className="text-gray-400 hover:text-brand-purple-500">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path></svg>
+                </a>
+                <a href="#" className="text-gray-400 hover:text-brand-purple-500">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+                </a>
+              </div>
+            </div>
+
+            {/* Product */}
+            <div>
+              <h3 className="font-bold mb-4">Product</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/wagers" className="hover:text-brand-purple-500">PVP Wagers</Link></li>
+                <li><Link href="/crypto" className="hover:text-brand-purple-500">Market Betting</Link></li>
+                <li><a href="#" className="hover:text-brand-purple-500">Leaderboard</a></li>
+                <li><a href="#" className="hover:text-brand-purple-500">Rewards</a></li>
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h3 className="font-bold mb-4">Resources</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><a href="#" className="hover:text-brand-purple-500">Documentation</a></li>
+                <li><a href="#" className="hover:text-brand-purple-500">Smart Contracts</a></li>
+                <li><a href="#" className="hover:text-brand-purple-500">API</a></li>
+                <li><a href="#" className="hover:text-brand-purple-500">Support</a></li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h3 className="font-bold mb-4">Legal</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><a href="#" className="hover:text-brand-purple-500">Terms of Service</a></li>
+                <li><a href="#" className="hover:text-brand-purple-500">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-brand-purple-500">Responsible Gaming</a></li>
+                <li><a href="#" className="hover:text-brand-purple-500">Cookie Policy</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-brand-purple-900/30 pt-8 text-center text-sm text-gray-400">
+            © 2025 CryptoWager. All rights reserved. Built on Ethereum • Powered by Smart Contracts
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
