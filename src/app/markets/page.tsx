@@ -72,13 +72,13 @@ export default function LandingPage() {
               <div className="flex flex-wrap gap-4">
                 <Link
                   href="/crypto"
-                  className="px-8 py-4 bg-gradient-purple rounded-xl font-semibold hover:shadow-glow-purple transition-all transform hover:-translate-y-1"
+                  className="px-8 py-4 bg-gradient-primary rounded-xl font-semibold hover:shadow-glow-primary transition-all transform hover:-translate-y-1"
                 >
                   Start Betting →
                 </Link>
                 <Link
                   href="#features"
-                  className="px-8 py-4 border-2 border-brand-purple-500 rounded-xl font-semibold hover:bg-brand-purple-500/10 transition-all"
+                  className="px-8 py-4 border-2 border-white/20 rounded-xl font-semibold hover:bg-white/5 transition-all backdrop-blur-sm"
                 >
                   Learn More
                 </Link>
@@ -322,15 +322,15 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { icon: '✅', title: 'Provably Fair', desc: 'All outcomes are verifiable on-chain. Smart contracts ensure complete transparency and fairness.', color: 'from-green-500 to-emerald-500' },
-              { icon: '⚡', title: 'Instant Settlements', desc: 'Winners receive payouts immediately. No waiting, no delays, just instant crypto rewards.', color: 'from-orange-500 to-yellow-500' },
-              { icon: '🔒', title: 'Secure & Trustless', desc: 'Your funds are protected by battle-tested smart contracts. Non-custodial, always in your control.', color: 'from-blue-500 to-cyan-500' },
-              { icon: '💰', title: 'Low Fees', desc: 'Only 2% platform fee on winnings. Keep more of your profits with transparent pricing.', color: 'from-pink-500 to-purple-500' },
-              { icon: '👥', title: 'Community Driven', desc: 'Join thousands of bettors worldwide. Chat, compete, and build your reputation on-chain.', color: 'from-red-500 to-pink-500' },
-              { icon: '🎁', title: 'Rewards Program', desc: 'Earn loyalty points with every bet. Unlock exclusive perks and cashback rewards.', color: 'from-purple-500 to-indigo-500' },
+              { icon: '✅', title: 'Provably Fair', desc: 'All outcomes are verifiable on-chain. Smart contracts ensure complete transparency and fairness.', gradient: 'bg-gradient-green' },
+              { icon: '⚡', title: 'Instant Settlements', desc: 'Winners receive payouts immediately. No waiting, no delays, just instant crypto rewards.', gradient: 'bg-gradient-orange' },
+              { icon: '🔒', title: 'Secure & Trustless', desc: 'Your funds are protected by battle-tested smart contracts. Non-custodial, always in your control.', gradient: 'bg-gradient-blue' },
+              { icon: '💰', title: 'Low Fees', desc: 'Only 2% platform fee on winnings. Keep more of your profits with transparent pricing.', gradient: 'bg-gradient-pink' },
+              { icon: '👥', title: 'Community Driven', desc: 'Join thousands of bettors worldwide. Chat, compete, and build your reputation on-chain.', gradient: 'bg-gradient-red' },
+              { icon: '🎁', title: 'Rewards Program', desc: 'Earn loyalty points with every bet. Unlock exclusive perks and cashback rewards.', gradient: 'bg-gradient-violet' },
             ].map((feature, i) => (
               <div key={i} className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-3xl mb-4`}>
+                <div className={`w-16 h-16 rounded-xl ${feature.gradient} flex items-center justify-center text-3xl mb-4`}>
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
@@ -344,7 +344,7 @@ export default function LandingPage() {
       {/* CTA Section */}
       <section className="py-20 px-6">
         <div className="container mx-auto">
-          <div className="max-w-4xl mx-auto bg-gradient-purple rounded-3xl p-12 text-center">
+          <div className="max-w-4xl mx-auto bg-gradient-cta rounded-3xl p-12 text-center shadow-2xl">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Ready to Start Winning?
             </h2>
@@ -352,10 +352,10 @@ export default function LandingPage() {
               Join thousands of players already making profits on CryptoWager. Connect your wallet and start betting in seconds.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <button className="px-8 py-4 bg-white text-brand-purple-500 rounded-xl font-bold hover:bg-gray-100 transition-all">
+              <button className="px-8 py-4 bg-gradient-primary rounded-xl font-bold hover:shadow-glow-primary transition-all transform hover:-translate-y-0.5">
                 Connect Wallet
               </button>
-              <Link href="#features" className="px-8 py-4 border-2 border-white rounded-xl font-semibold hover:bg-white/10 transition-all">
+              <Link href="#features" className="px-8 py-4 border-2 border-white/30 rounded-xl font-semibold hover:bg-white/10 transition-all backdrop-blur-sm">
                 View Documentation
               </Link>
             </div>

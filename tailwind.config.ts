@@ -10,48 +10,95 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // CryptoWager Dark Purple Theme
+        // CryptoWager Color Scheme from Figma
         brand: {
           bg: {
-            primary: '#0a0118',    // Deep purple background
-            secondary: '#1a0b2e',  // Dark purple
-            tertiary: '#2d1b4e',   // Medium dark purple
-            card: '#1e0f3e',       // Card background
+            primary: '#0D0221',    // Deep purple/navy background
+            secondary: '#190B2F',  // Dark purple
+            tertiary: '#2D1B4E',   // Medium purple
+            card: '#1F0F3D',       // Card background
+            footer: '#0A0118',     // Footer background (darker)
           },
           purple: {
-            50: '#f5e6ff',
-            100: '#e6ccff',
-            200: '#d499ff',
-            300: '#c266ff',
-            400: '#b033ff',
-            500: '#b855f5',  // Primary brand purple
-            600: '#a044dd',
-            700: '#8833bb',
-            800: '#702299',
-            900: '#581177',
+            50: '#FAF5FF',
+            100: '#F3E8FF',
+            200: '#E9D5FF',
+            300: '#D8B4FE',
+            400: '#C084FC',
+            500: '#A855F7',  // Primary purple
+            600: '#9333EA',
+            700: '#7E22CE',
+            800: '#6B21A8',
+            900: '#581C87',
           },
           magenta: {
-            500: '#dd55f5',  // Gradient end
-            600: '#c544dd',
+            400: '#F472B6',
+            500: '#EC4899',  // Primary magenta/pink
+            600: '#DB2777',
+            700: '#BE185D',
           },
-          success: '#00ff88',  // Bull/positive
-          error: '#ff4466',    // Bear/negative
-          warning: '#ffaa00',
-          info: '#00d4ff',
+          // Main CTA button color (bright magenta)
+          primary: '#E935E7',
+
+          // Feature card gradients
+          green: {
+            from: '#10B981',
+            to: '#34D399',
+          },
+          orange: {
+            from: '#F97316',
+            to: '#FB923C',
+          },
+          blue: {
+            from: '#3B82F6',
+            to: '#60A5FA',
+          },
+          pink: {
+            from: '#EC4899',
+            to: '#F472B6',
+          },
+          red: {
+            from: '#EF4444',
+            to: '#F87171',
+          },
+          violet: {
+            from: '#A855F7',
+            to: '#C084FC',
+          },
+
+          // Semantic colors
+          success: '#10B981',  // Green for bull/positive
+          error: '#EF4444',    // Red for bear/negative
+          warning: '#F59E0B',
+          info: '#3B82F6',
         },
         // Keep existing for compatibility
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
       backgroundImage: {
-        'gradient-purple': 'linear-gradient(135deg, #b855f5 0%, #dd55f5 100%)',
-        'gradient-purple-pink': 'linear-gradient(135deg, #b855f5 0%, #dd55f5 50%, #ff66cc 100%)',
-        'gradient-dark': 'linear-gradient(180deg, #0a0118 0%, #1a0b2e 50%, #2d1b4e 100%)',
-        'gradient-card': 'linear-gradient(135deg, rgba(184, 85, 245, 0.1) 0%, rgba(221, 85, 245, 0.05) 100%)',
+        // Primary gradients
+        'gradient-primary': 'linear-gradient(135deg, #E935E7 0%, #F472B6 100%)',
+        'gradient-purple': 'linear-gradient(135deg, #A855F7 0%, #C084FC 100%)',
+        'gradient-dark': 'linear-gradient(180deg, #0D0221 0%, #190B2F 50%, #2D1B4E 100%)',
+        'gradient-card': 'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(236, 72, 153, 0.05) 100%)',
+
+        // Feature card gradients
+        'gradient-green': 'linear-gradient(135deg, #10B981 0%, #34D399 100%)',
+        'gradient-orange': 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)',
+        'gradient-blue': 'linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%)',
+        'gradient-pink': 'linear-gradient(135deg, #EC4899 0%, #F472B6 100%)',
+        'gradient-red': 'linear-gradient(135deg, #EF4444 0%, #F87171 100%)',
+        'gradient-violet': 'linear-gradient(135deg, #A855F7 0%, #C084FC 100%)',
+
+        // CTA section gradient
+        'gradient-cta': 'linear-gradient(135deg, #7E22CE 0%, #BE185D 100%)',
       },
       boxShadow: {
-        'glow-purple': '0 0 20px rgba(184, 85, 245, 0.5)',
-        'glow-purple-lg': '0 0 40px rgba(184, 85, 245, 0.6)',
+        'glow-purple': '0 0 20px rgba(168, 85, 247, 0.5)',
+        'glow-purple-lg': '0 0 40px rgba(168, 85, 247, 0.6)',
+        'glow-primary': '0 0 20px rgba(233, 53, 231, 0.5)',
+        'glow-primary-lg': '0 0 40px rgba(233, 53, 231, 0.6)',
       },
       borderRadius: {
         'xl': '1rem',
