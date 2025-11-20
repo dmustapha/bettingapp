@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { BitcoinLogo, EthereumLogo, SolanaLogo } from '@/components/crypto/CryptoIcons';
+import { ChartPreview, MiniChart } from '@/components/crypto/ChartPreview';
 
 export default function LandingPage() {
   return (
@@ -110,11 +112,9 @@ export default function LandingPage() {
               <div className="space-y-4">
                 {/* BTC Card */}
                 <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center font-bold text-white">
-                        BTC
-                      </div>
+                      <BitcoinLogo className="w-12 h-12" />
                       <div>
                         <div className="font-semibold text-gray-300">Bitcoin</div>
                         <div className="text-2xl font-bold">$45,234</div>
@@ -125,15 +125,14 @@ export default function LandingPage() {
                       <div className="text-sm text-gray-400">24h</div>
                     </div>
                   </div>
+                  <ChartPreview trend="up" className="w-full h-12" />
                 </div>
 
                 {/* ETH Card */}
                 <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all ml-12">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white text-sm">
-                        ETH
-                      </div>
+                      <EthereumLogo className="w-12 h-12" />
                       <div>
                         <div className="font-semibold text-gray-300">Ethereum</div>
                         <div className="text-2xl font-bold">$2,344</div>
@@ -144,15 +143,14 @@ export default function LandingPage() {
                       <div className="text-sm text-gray-400">24h</div>
                     </div>
                   </div>
+                  <ChartPreview trend="down" className="w-full h-12" />
                 </div>
 
                 {/* SOL Card */}
                 <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center font-bold text-white text-sm">
-                        SOL
-                      </div>
+                      <SolanaLogo className="w-12 h-12" />
                       <div>
                         <div className="font-semibold text-gray-300">Solana</div>
                         <div className="text-2xl font-bold">$98.45</div>
@@ -163,6 +161,7 @@ export default function LandingPage() {
                       <div className="text-sm text-gray-400">24h</div>
                     </div>
                   </div>
+                  <ChartPreview trend="down" className="w-full h-12" />
                 </div>
               </div>
             </div>
@@ -259,9 +258,7 @@ export default function LandingPage() {
             <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-8 shadow-xl">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center font-bold text-white text-lg shadow-lg">
-                    BTC
-                  </div>
+                  <BitcoinLogo className="w-16 h-16 shadow-lg" />
                   <div>
                     <div className="text-xl font-semibold text-gray-300">Bitcoin</div>
                     <div className="text-3xl font-bold">$45,234.50</div>
@@ -271,6 +268,11 @@ export default function LandingPage() {
                   <div className="text-brand-success text-2xl font-bold">+2.5%</div>
                   <div className="text-sm text-gray-400">Expires in 2h 15m</div>
                 </div>
+              </div>
+
+              {/* Chart Preview */}
+              <div className="mb-6 bg-brand-bg-secondary/50 rounded-xl p-4">
+                <ChartPreview trend="up" className="w-full h-24" />
               </div>
 
               {/* Bull vs Bear Progress */}
