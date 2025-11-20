@@ -13,6 +13,7 @@ contract BettingMarket {
         uint256 id;
         address creator;
         string description;
+        string category;
         uint256 endTime;
         uint256 totalYesBets;
         uint256 totalNoBets;
@@ -48,6 +49,7 @@ contract BettingMarket {
         uint256 indexed marketId,
         address indexed creator,
         string description,
+        string category,
         uint256 endTime,
         uint256 minBet
     );
@@ -101,17 +103,20 @@ contract BettingMarket {
     /**
      * @notice Create a new betting market
      * @param description Description of the market
+     * @param category Market category (Sports, Politics, etc.)
      * @param endTime Unix timestamp when betting closes
      * @param minBet Minimum bet amount in wei
      */
     function createMarket(
         string memory description,
+        string memory category,
         uint256 endTime,
         uint256 minBet
     ) external whenNotPaused returns (uint256) {
         require(endTime > block.timestamp, "End time must be in future");
         require(minBet > 0, "Min bet must be greater than 0");
         require(bytes(description).length > 0, "Description required");
+        require(bytes(category).length > 0, "Category required");
 
         uint256 marketId = marketCounter;
 
@@ -119,6 +124,7 @@ contract BettingMarket {
             id: marketId,
             creator: msg.sender,
             description: description,
+            category: category,
             endTime: endTime,
             totalYesBets: 0,
             totalNoBets: 0,
@@ -130,7 +136,7 @@ contract BettingMarket {
 
         marketCounter++;
 
-        emit MarketCreated(marketId, msg.sender, description, endTime, minBet);
+        emit MarketCreated(marketId, msg.sender, description, category, endTime, minBet);
         return marketId;
     }
 

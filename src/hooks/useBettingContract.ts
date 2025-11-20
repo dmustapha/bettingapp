@@ -71,12 +71,12 @@ export function useCreateMarket() {
     hash,
   });
 
-  const createMarket = (description: string, endTime: number, minBet: string) => {
+  const createMarket = (description: string, category: string, endTime: number, minBet: string) => {
     writeContract({
       address: BETTING_MARKET_ADDRESS,
       abi: BETTING_MARKET_ABI,
       functionName: 'createMarket',
-      args: [description, BigInt(endTime), parseEther(minBet)],
+      args: [description, category, BigInt(endTime), parseEther(minBet)],
     });
   };
 

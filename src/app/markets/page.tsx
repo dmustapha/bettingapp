@@ -1,10 +1,12 @@
 'use client';
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useMarketCounter, useMarket, useMarketOdds } from '@/hooks/useBettingContract';
 import { isContractDeployed } from '@/lib/contract';
 import { formatEth, formatDate, getTimeRemaining, hasMarketEnded } from '@/lib/utils';
+import { MainNav } from '@/components/layout/MainNav';
+import { Footer } from '@/components';
 
 function MarketCard({ marketId }: { marketId: number }) {
   const { data: market, isLoading } = useMarket(marketId);
@@ -26,15 +28,24 @@ function MarketCard({ marketId }: { marketId: number }) {
   const yesOdds = odds ? Number(odds[0]) : 50;
   const noOdds = odds ? Number(odds[1]) : 50;
 
+  // Category badge colors
+  const categoryColors: Record<string, string> = {
+    Sports: 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200',
+    Politics: 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200',
+    Entertainment: 'bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200',
+    Crypto: 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200',
+    Custom: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
+  };
+
   return (
     <Link href={`/markets/${marketId}`}>
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-blue-500">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              {market.description}
-            </h3>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-2 mb-2">
+              <span className={`px-2 py-1 rounded text-xs font-semibold ${categoryColors[market.category] || categoryColors.Custom}`}>
+                {market.category}
+              </span>
               <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                 market.resolved
                   ? 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
@@ -44,6 +55,11 @@ function MarketCard({ marketId }: { marketId: number }) {
               }`}>
                 {market.resolved ? 'Resolved' : ended ? 'Ended' : 'Active'}
               </span>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              {market.description}
+            </h3>
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               {!market.resolved && (
                 <span>
                   {ended ? `Ended ${formatDate(market.endTime)}` : `Ends in ${getTimeRemaining(market.endTime)}`}
@@ -88,22 +104,13 @@ function MarketCard({ marketId }: { marketId: number }) {
 
 export default function MarketsPage() {
   const { data: marketCounter, isLoading } = useMarketCounter();
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   if (!isContractDeployed()) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-        <header className="border-b border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex justify-between items-center">
-              <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                VibeCoding Betting
-              </Link>
-              <ConnectButton />
-            </div>
-          </div>
-        </header>
-
-        <main className="container mx-auto px-4 py-8">
+      <div className="min-h-screen flex flex-col">
+        <MainNav />
+        <main className="flex-1 container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
             <div className="text-6xl mb-4">⚠️</div>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
@@ -120,31 +127,24 @@ export default function MarketsPage() {
             </Link>
           </div>
         </main>
+        <Footer />
       </div>
     );
   }
 
   const totalMarkets = marketCounter ? Number(marketCounter) : 0;
   const marketIds = Array.from({ length: totalMarkets }, (_, i) => i);
+  const categories = ['All', 'Sports', 'Politics', 'Entertainment', 'Crypto', 'Custom'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <header className="border-b border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              VibeCoding Betting
-            </Link>
-            <ConnectButton />
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <MainNav />
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Betting Markets
+              Prediction Markets
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               {isLoading ? 'Loading...' : `${totalMarkets} markets available`}
@@ -156,6 +156,23 @@ export default function MarketsPage() {
           >
             + Create Market
           </Link>
+        </div>
+
+        {/* Category Filter */}
+        <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
+                selectedCategory === cat
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
 
         {isLoading ? (
@@ -187,11 +204,23 @@ export default function MarketsPage() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {marketIds.reverse().map((id) => (
-              <MarketCard key={id} marketId={id} />
+              <FilteredMarketCard key={id} marketId={id} selectedCategory={selectedCategory} />
             ))}
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
+}
+
+// Wrapper component to handle filtering
+function FilteredMarketCard({ marketId, selectedCategory }: { marketId: number; selectedCategory: string }) {
+  const { data: market } = useMarket(marketId);
+
+  // Filter logic
+  if (!market) return null;
+  if (selectedCategory !== 'All' && market.category !== selectedCategory) return null;
+
+  return <MarketCard marketId={marketId} />;
 }

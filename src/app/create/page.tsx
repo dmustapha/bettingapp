@@ -6,6 +6,8 @@ import { useAccount } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useCreateMarket } from '@/hooks/useBettingContract';
 import { isContractDeployed } from '@/lib/contract';
+import { MainNav } from '@/components/layout/MainNav';
+import { Footer } from '@/components';
 import Link from 'next/link';
 
 export default function CreateMarketPage() {
@@ -14,6 +16,7 @@ export default function CreateMarketPage() {
   const { createMarket, isPending, isConfirming, isSuccess, error } = useCreateMarket();
 
   const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('Sports');
   const [endDate, setEndDate] = useState('');
   const [endTime, setEndTime] = useState('');
   const [minBet, setMinBet] = useState('0.01');
@@ -21,7 +24,7 @@ export default function CreateMarketPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!description || !endDate || !endTime || !minBet) {
+    if (!description || !category || !endDate || !endTime || !minBet) {
       alert('Please fill in all fields');
       return;
     }
@@ -36,7 +39,7 @@ export default function CreateMarketPage() {
       return;
     }
 
-    createMarket(description, endTimeUnix, minBet);
+    createMarket(description, category, endTimeUnix, minBet);
   };
 
   // Redirect on success
@@ -48,19 +51,9 @@ export default function CreateMarketPage() {
 
   if (!isContractDeployed()) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-        <header className="border-b border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex justify-between items-center">
-              <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                VibeCoding Betting
-              </Link>
-              <ConnectButton />
-            </div>
-          </div>
-        </header>
-
-        <main className="container mx-auto px-4 py-8">
+      <div className="min-h-screen flex flex-col">
+        <MainNav />
+        <main className="flex-1 container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
             <div className="text-6xl mb-4">⚠️</div>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
@@ -77,24 +70,16 @@ export default function CreateMarketPage() {
             </Link>
           </div>
         </main>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <header className="border-b border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              VibeCoding Betting
-            </Link>
-            <ConnectButton />
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <MainNav />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="mb-6">
             <Link href="/markets" className="text-blue-600 hover:text-blue-700 dark:text-blue-400">
@@ -130,6 +115,27 @@ export default function CreateMarketPage() {
                   />
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                     Be clear and specific. This should be a YES/NO question.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    Category *
+                  </label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  >
+                    <option value="Sports">Sports</option>
+                    <option value="Politics">Politics</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Crypto">Crypto</option>
+                    <option value="Custom">Custom</option>
+                  </select>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Choose the category that best fits your market
                   </p>
                 </div>
 
@@ -220,6 +226,7 @@ export default function CreateMarketPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
