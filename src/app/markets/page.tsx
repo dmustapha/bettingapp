@@ -112,16 +112,16 @@ export default function LandingPage() {
                 <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center text-2xl">
-                        ₿
+                      <div className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center font-bold text-white">
+                        BTC
                       </div>
                       <div>
-                        <div className="font-semibold">Bitcoin</div>
+                        <div className="font-semibold text-gray-300">Bitcoin</div>
                         <div className="text-2xl font-bold">$45,234</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-brand-success font-semibold">+2.5%</div>
+                      <div className="text-brand-success font-semibold text-lg">+2.5%</div>
                       <div className="text-sm text-gray-400">24h</div>
                     </div>
                   </div>
@@ -131,16 +131,16 @@ export default function LandingPage() {
                 <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all ml-12">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-2xl">
-                        ⟠
+                      <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white text-sm">
+                        ETH
                       </div>
                       <div>
-                        <div className="font-semibold">Ethereum</div>
+                        <div className="font-semibold text-gray-300">Ethereum</div>
                         <div className="text-2xl font-bold">$2,344</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-brand-error font-semibold">-1.2%</div>
+                      <div className="text-brand-error font-semibold text-lg">-1.2%</div>
                       <div className="text-sm text-gray-400">24h</div>
                     </div>
                   </div>
@@ -150,16 +150,16 @@ export default function LandingPage() {
                 <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center font-bold">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center font-bold text-white text-sm">
                         SOL
                       </div>
                       <div>
-                        <div className="font-semibold">Solana</div>
+                        <div className="font-semibold text-gray-300">Solana</div>
                         <div className="text-2xl font-bold">$98.45</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-brand-error font-semibold">-2.1%</div>
+                      <div className="text-brand-error font-semibold text-lg">-2.1%</div>
                       <div className="text-sm text-gray-400">24h</div>
                     </div>
                   </div>
@@ -256,41 +256,49 @@ export default function LandingPage() {
           </div>
 
           <div className="max-w-4xl mx-auto mb-12">
-            <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-8">
+            <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-8 shadow-xl">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center font-bold text-2xl">
-                    ₿
+                  <div className="w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center font-bold text-white text-lg shadow-lg">
+                    BTC
                   </div>
                   <div>
-                    <div className="text-2xl font-bold">Bitcoin</div>
+                    <div className="text-xl font-semibold text-gray-300">Bitcoin</div>
                     <div className="text-3xl font-bold">$45,234.50</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-brand-success text-2xl font-bold">+2%</div>
+                  <div className="text-brand-success text-2xl font-bold">+2.5%</div>
                   <div className="text-sm text-gray-400">Expires in 2h 15m</div>
                 </div>
               </div>
 
               {/* Bull vs Bear Progress */}
               <div className="mb-6">
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-brand-success">🐂 Bull 65%</span>
-                  <span className="text-brand-error">🐻 Bear 35%</span>
+                <div className="flex justify-between text-sm font-semibold mb-2">
+                  <span className="text-brand-success flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 3l7 7-7 7V3z"/></svg>
+                    Bull 65%
+                  </span>
+                  <span className="text-brand-error flex items-center gap-1">
+                    Bear 35%
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 17l-7-7 7-7v14z"/></svg>
+                  </span>
                 </div>
-                <div className="h-3 bg-brand-bg-secondary rounded-full overflow-hidden">
+                <div className="h-4 bg-brand-bg-secondary rounded-full overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-brand-success to-green-400" style={{ width: '65%' }}></div>
                 </div>
               </div>
 
               {/* Bet Buttons */}
               <div className="grid grid-cols-2 gap-4">
-                <Link href="/crypto" className="py-4 bg-brand-success/20 border-2 border-brand-success rounded-xl font-semibold text-center hover:bg-brand-success/30 transition-all">
-                  📈 Bet Bull
+                <Link href="/crypto" className="py-4 bg-brand-success/20 border-2 border-brand-success rounded-xl font-bold text-center hover:bg-brand-success/30 transition-all flex items-center justify-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                  Bet Bull
                 </Link>
-                <Link href="/crypto" className="py-4 bg-brand-error/20 border-2 border-brand-error rounded-xl font-semibold text-center hover:bg-brand-error/30 transition-all">
-                  📉 Bet Bear
+                <Link href="/crypto" className="py-4 bg-brand-error/20 border-2 border-brand-error rounded-xl font-bold text-center hover:bg-brand-error/30 transition-all flex items-center justify-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
+                  Bet Bear
                 </Link>
               </div>
 
