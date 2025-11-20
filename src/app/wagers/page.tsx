@@ -14,9 +14,9 @@ function WagerCard({ wagerId }: { wagerId: number }) {
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-pulse">
-        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+      <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-lg p-6 animate-pulse">
+        <div className="h-6 bg-brand-bg-tertiary rounded w-3/4 mb-4"></div>
+        <div className="h-4 bg-brand-bg-tertiary rounded w-1/2"></div>
       </div>
     );
   }
@@ -29,39 +29,39 @@ function WagerCard({ wagerId }: { wagerId: number }) {
   const isResolver = address?.toLowerCase() === wager.resolver.toLowerCase();
 
   const getStatus = () => {
-    if (wager.resolved) return { label: 'Resolved', color: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200' };
-    if (!wager.accepted && isExpired) return { label: 'Expired', color: 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200' };
-    if (!wager.accepted) return { label: 'Open', color: 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' };
-    if (wager.accepted && !wager.resolved) return { label: 'Accepted', color: 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200' };
-    return { label: 'Unknown', color: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200' };
+    if (wager.resolved) return { label: 'Resolved', color: 'bg-gray-500/20 text-gray-300 border border-gray-500/30' };
+    if (!wager.accepted && isExpired) return { label: 'Expired', color: 'bg-brand-warning/20 text-brand-warning border border-brand-warning/30' };
+    if (!wager.accepted) return { label: 'Open', color: 'bg-brand-success/20 text-brand-success border border-brand-success/30' };
+    if (wager.accepted && !wager.resolved) return { label: 'Accepted', color: 'bg-brand-info/20 text-brand-info border border-brand-info/30' };
+    return { label: 'Unknown', color: 'bg-gray-500/20 text-gray-300 border border-gray-500/30' };
   };
 
   const status = getStatus();
 
   return (
     <Link href={`/wagers/${wagerId}`}>
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-green-500">
+      <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-lg p-6 hover:shadow-glow-purple hover:border-brand-purple-500 transition-all">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${status.color}`}>
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
+              <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${status.color}`}>
                 {status.label}
               </span>
               {(isUserA || isUserB) && (
-                <span className="px-2 py-1 rounded text-xs font-semibold bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200">
+                <span className="px-3 py-1 rounded-lg text-xs font-semibold bg-brand-purple-500/20 text-brand-purple-300 border border-brand-purple-500/30">
                   Your Wager
                 </span>
               )}
               {isResolver && (
-                <span className="px-2 py-1 rounded text-xs font-semibold bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">
+                <span className="px-3 py-1 rounded-lg text-xs font-semibold bg-brand-warning/20 text-brand-warning border border-brand-warning/30">
                   You're Resolver
                 </span>
               )}
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">
               {wager.claim}
             </h3>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-2 text-sm text-gray-400">
               {!wager.resolved && !isExpired && (
                 <span>Expires {formatDate(wager.expiryTime)}</span>
               )}
@@ -72,17 +72,17 @@ function WagerCard({ wagerId }: { wagerId: number }) {
           </div>
         </div>
 
-        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-4">
+        <div className="bg-brand-bg-secondary/50 border border-brand-purple-900/30 rounded-xl p-4 mb-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Creator</div>
-              <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <div className="text-xs text-gray-400 mb-1">Creator</div>
+              <div className="text-sm font-semibold text-white">
                 {shortenAddress(wager.userA)}
               </div>
             </div>
             <div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Opponent</div>
-              <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <div className="text-xs text-gray-400 mb-1">Opponent</div>
+              <div className="text-sm font-semibold text-white">
                 {wager.userB !== '0x0000000000000000000000000000000000000000'
                   ? shortenAddress(wager.userB)
                   : 'Waiting...'}
@@ -93,24 +93,24 @@ function WagerCard({ wagerId }: { wagerId: number }) {
 
         <div className="flex justify-between items-center text-sm">
           <div>
-            <span className="text-gray-600 dark:text-gray-400">Stake:</span>
-            <span className="ml-2 font-bold text-gray-900 dark:text-gray-100">
+            <span className="text-gray-400">Stake:</span>
+            <span className="ml-2 font-bold text-white">
               {formatEth(wager.stakeAmount)} ETH
             </span>
           </div>
           <div>
-            <span className="text-gray-600 dark:text-gray-400">Total Pool:</span>
-            <span className="ml-2 font-bold text-green-600 dark:text-green-400">
+            <span className="text-gray-400">Total Pool:</span>
+            <span className="ml-2 font-bold text-brand-success">
               {formatEth(wager.stakeAmount * 2n)} ETH
             </span>
           </div>
         </div>
 
         {wager.resolved && wager.winner !== '0x0000000000000000000000000000000000000000' && (
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          <div className="mt-4 pt-4 border-t border-brand-purple-900/50">
+            <div className="text-sm font-semibold text-gray-300">
               Winner:{' '}
-              <span className="text-green-600 dark:text-green-400">
+              <span className="text-brand-success">
                 {shortenAddress(wager.winner)}
               </span>
             </div>
@@ -130,22 +130,22 @@ export default function WagersPage() {
   const filters = ['all', 'open', 'accepted', 'resolved'];
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-dark">
       <MainNav />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 container mx-auto px-4 py-8 pt-24">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            <h1 className="text-4xl font-bold text-white mb-2">
               P2P Wagers
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              {isLoading ? 'Loading...' : `${totalWagers} wagers total`}
+            <p className="text-gray-400">
+              {isLoading ? 'Loading...' : `${totalWagers} active wagers`}
             </p>
           </div>
           <Link
             href="/wagers/create"
-            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-2 px-6 rounded-lg transition-all"
+            className="bg-gradient-purple hover:shadow-glow-purple text-white font-semibold py-3 px-8 rounded-xl transition-all"
           >
             + Create Wager
           </Link>
@@ -157,10 +157,10 @@ export default function WagersPage() {
             <button
               key={f}
               onClick={() => setFilter(f as typeof filter)}
-              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap capitalize transition-all ${
+              className={`px-4 py-2 rounded-xl font-medium whitespace-nowrap capitalize transition-all ${
                 filter === f
-                  ? 'bg-green-600 text-white'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  ? 'bg-gradient-purple text-white shadow-glow-purple'
+                  : 'bg-brand-bg-secondary border border-brand-purple-900/50 text-gray-300 hover:bg-brand-bg-tertiary'
               }`}
             >
               {f}
@@ -171,25 +171,25 @@ export default function WagersPage() {
         {isLoading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-pulse">
-                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
-                <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div key={i} className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-lg p-6 animate-pulse">
+                <div className="h-6 bg-brand-bg-tertiary rounded w-3/4 mb-4"></div>
+                <div className="h-4 bg-brand-bg-tertiary rounded w-1/2 mb-4"></div>
+                <div className="h-20 bg-brand-bg-tertiary rounded"></div>
               </div>
             ))}
           </div>
         ) : totalWagers === 0 ? (
-          <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
+          <div className="max-w-2xl mx-auto bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-glow-purple p-12 text-center">
             <div className="text-6xl mb-4">🤝</div>
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+            <h2 className="text-2xl font-bold mb-4 text-white">
               No Wagers Yet
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-gray-400 mb-6">
               Be the first to create a peer-to-peer wager!
             </p>
             <Link
               href="/wagers/create"
-              className="inline-block bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-8 rounded-lg transition-all"
+              className="inline-block bg-gradient-purple hover:shadow-glow-purple text-white font-semibold py-3 px-8 rounded-xl transition-all"
             >
               Create First Wager
             </Link>
