@@ -111,57 +111,44 @@ export default function LandingPage() {
             <div className="hidden lg:block relative">
               <div className="space-y-4">
                 {/* BTC Card */}
-                <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
-                  <div className="flex items-center justify-between mb-4">
+                <div className="bg-brand-bg-card/90 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-5 hover:border-brand-purple-500 transition-all shadow-xl">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <span className="text-green-500 font-bold text-sm">BTC</span>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-400">Bitcoin</div>
+                        <div className="text-xl font-bold">$45,234.50</div>
+                      </div>
+                    </div>
+                    <div className="text-brand-success font-semibold">+6.5%</div>
+                  </div>
+                </div>
+
+                {/* Live Wagers Card */}
+                <div className="bg-brand-bg-card/90 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-5 hover:border-brand-purple-500 transition-all ml-8 shadow-xl">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                        <span className="text-purple-400 font-bold text-sm">ETH</span>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-400">Live Wagers</div>
+                        <div className="text-xl font-bold">1,234</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-400">Active Bets</div>
+                </div>
+
+                {/* Gold Coin Visual */}
+                <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur-sm border border-yellow-600/30 rounded-2xl p-6 hover:border-yellow-500/50 transition-all mr-8 shadow-xl">
+                  <div className="flex items-center justify-center">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
                       <BitcoinLogo className="w-12 h-12" />
-                      <div>
-                        <div className="font-semibold text-gray-300">Bitcoin</div>
-                        <div className="text-2xl font-bold">$45,234</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-brand-success font-semibold text-lg">+2.5%</div>
-                      <div className="text-sm text-gray-400">24h</div>
                     </div>
                   </div>
-                  <ChartPreview trend="up" className="w-full h-12" />
-                </div>
-
-                {/* ETH Card */}
-                <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all ml-12">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <EthereumLogo className="w-12 h-12" />
-                      <div>
-                        <div className="font-semibold text-gray-300">Ethereum</div>
-                        <div className="text-2xl font-bold">$2,344</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-brand-error font-semibold text-lg">-1.2%</div>
-                      <div className="text-sm text-gray-400">24h</div>
-                    </div>
-                  </div>
-                  <ChartPreview trend="down" className="w-full h-12" />
-                </div>
-
-                {/* SOL Card */}
-                <div className="bg-brand-bg-card/80 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <SolanaLogo className="w-12 h-12" />
-                      <div>
-                        <div className="font-semibold text-gray-300">Solana</div>
-                        <div className="text-2xl font-bold">$98.45</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-brand-error font-semibold text-lg">-2.1%</div>
-                      <div className="text-sm text-gray-400">24h</div>
-                    </div>
-                  </div>
-                  <ChartPreview trend="down" className="w-full h-12" />
                 </div>
               </div>
             </div>
@@ -174,17 +161,17 @@ export default function LandingPage() {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: '📊', value: '$50M+', label: 'Total Wagered', color: 'from-orange-500 to-yellow-500' },
-              { icon: '🎮', value: '100K+', label: 'Wagers Settled', color: 'from-pink-500 to-purple-500' },
-              { icon: '⚡', value: '<5s', label: 'Avg Settlement Time', color: 'from-cyan-500 to-blue-500' },
-              { icon: '🔒', value: '100%', label: 'Secure Transactions', color: 'from-green-500 to-emerald-500' },
+              { icon: '📊', value: '$50M+', label: 'Total Wagered', gradient: 'bg-gradient-orange' },
+              { icon: '🎮', value: '100K+', label: 'Wagers Settled', gradient: 'bg-gradient-pink' },
+              { icon: '⚡', value: '<5s', label: 'Avg Settlement Time', gradient: 'bg-gradient-blue' },
+              { icon: '🔒', value: '100%', label: 'Secure Transactions', gradient: 'bg-gradient-green' },
             ].map((stat, i) => (
-              <div key={i} className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-3xl mb-4`}>
+              <div key={i} className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 hover:shadow-glow-purple transition-all group">
+                <div className={`w-16 h-16 rounded-2xl ${stat.gradient} flex items-center justify-center text-3xl mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
                   {stat.icon}
                 </div>
                 <div className="text-3xl font-bold mb-1">{stat.value}</div>
-                <div className="text-gray-400">{stat.label}</div>
+                <div className="text-gray-400 text-sm">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -206,35 +193,112 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {[
-              { icon: '🪙', name: 'Coin Flip', desc: 'Simple 50/50 chance. Winner takes all.', color: 'from-orange-500 to-yellow-500' },
-              { icon: '🎲', name: 'Dice Roll', desc: 'Roll the dice, higher number wins.', color: 'from-pink-500 to-red-500' },
-              { icon: '⚔️', name: 'Price Battle', desc: 'Predict if crypto goes up or down.', color: 'from-green-500 to-emerald-500' },
-              { icon: '✨', name: 'Custom Wager', desc: 'Create your own betting challenge.', color: 'from-purple-500 to-pink-500' },
-            ].map((game, i) => (
-              <Link key={i} href="/wagers" className="group">
-                <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all h-full">
-                  <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${game.color} flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform`}>
-                    {game.icon}
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">{game.name}</h3>
-                  <p className="text-gray-400 text-sm mb-4">{game.desc}</p>
-                  <div className="flex items-center text-brand-purple-500 font-semibold">
-                    <span>Play Now</span>
-                    <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <div className="grid lg:grid-cols-2 gap-8 mb-12">
+            {/* Choose Your Game */}
+            <div>
+              <h3 className="text-2xl font-bold mb-6">Choose Your Game</h3>
+              <div className="space-y-4">
+                {[
+                  { icon: '🪙', name: 'Coin Flip', desc: 'Simple 50/50 chance. Winner takes all.', gradient: 'bg-gradient-orange' },
+                  { icon: '🎲', name: 'Dice Roll', desc: 'Roll the dice, higher number wins.', gradient: 'bg-gradient-pink' },
+                  { icon: '⚔️', name: 'Price Battle', desc: 'Predict if crypto goes up or down.', gradient: 'bg-gradient-green' },
+                  { icon: '✨', name: 'Custom Wager', desc: 'Create your own betting challenge.', gradient: 'bg-gradient-violet' },
+                ].map((game, i) => (
+                  <Link key={i} href="/wagers" className="group block">
+                    <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-5 hover:border-brand-purple-500 hover:shadow-glow-purple transition-all flex items-center gap-4">
+                      <div className={`w-14 h-14 rounded-xl ${game.gradient} flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform flex-shrink-0`}>
+                        {game.icon}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold mb-1">{game.name}</h4>
+                        <p className="text-gray-400 text-sm">{game.desc}</p>
+                      </div>
+                      <svg className="w-5 h-5 text-gray-400 group-hover:text-brand-purple-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
 
-          <div className="text-center">
-            <Link href="/wagers" className="inline-block px-8 py-4 bg-gradient-purple rounded-xl font-semibold hover:shadow-glow-purple transition-all">
-              View All Wagers
-            </Link>
+            {/* Live Wagers */}
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold">Live Wagers</h3>
+                <span className="px-3 py-1 bg-green-500/20 text-green-500 text-xs font-semibold rounded-full border border-green-500/30">
+                  OPEN
+                </span>
+              </div>
+              <div className="space-y-4">
+                {/* Live Wager Card 1 */}
+                <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-5 hover:border-brand-purple-500 transition-all">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                        <span className="text-purple-400 font-bold text-xs">🎲</span>
+                      </div>
+                      <div>
+                        <div className="font-bold">Coin Flip</div>
+                        <div className="text-sm text-gray-400">CryptoKing <span className="text-gray-500">vs</span> <span className="text-brand-purple-400">You can join</span></div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-gray-400 mb-1">⏱ 5m 32s</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <div className="text-xs text-gray-400 mb-1">Pot Size</div>
+                      <div className="font-bold">0.5 ETH</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-400 mb-1">Odds</div>
+                      <div className="font-bold">50/50</div>
+                    </div>
+                  </div>
+                  <button className="w-full py-3 bg-gradient-primary rounded-xl font-bold hover:shadow-glow-primary transition-all">
+                    Join Wager
+                  </button>
+                </div>
+
+                {/* Live Wager Card 2 */}
+                <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-5 hover:border-brand-purple-500 transition-all">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <span className="text-green-400 font-bold text-xs">⚔️</span>
+                      </div>
+                      <div>
+                        <div className="font-bold">Price Prediction</div>
+                        <div className="text-sm text-gray-400">DiamondHands <span className="text-gray-500">vs</span> <span className="text-brand-purple-400">You can join</span></div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-gray-400 mb-1">⏱ 10m 46s</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <div className="text-xs text-gray-400 mb-1">Pot Size</div>
+                      <div className="font-bold">1.2 ETH</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-400 mb-1">Odds</div>
+                      <div className="font-bold">45/55</div>
+                    </div>
+                  </div>
+                  <button className="w-full py-3 bg-gradient-primary rounded-xl font-bold hover:shadow-glow-primary transition-all">
+                    Join Wager
+                  </button>
+                </div>
+
+                {/* View All Link */}
+                <Link href="/wagers" className="block text-center py-3 text-brand-purple-400 hover:text-brand-purple-300 font-semibold transition-colors">
+                  View All Live Wagers →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -254,65 +318,152 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto mb-12">
-            <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-8 shadow-xl">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
-                  <BitcoinLogo className="w-16 h-16 shadow-lg" />
+          {/* How It Works + Available Timeframes */}
+          <div className="grid lg:grid-cols-2 gap-8 mb-12">
+            {/* How It Works */}
+            <div>
+              <h3 className="text-2xl font-bold mb-6">How It Works</h3>
+              <div className="space-y-4">
+                {[
+                  { num: '1', title: 'Choose a Market', desc: 'Select any crypto asset you want to bet on.' },
+                  { num: '2', title: 'Predict Direction', desc: 'Will it go up or down? Place your bet.' },
+                  { num: '3', title: 'Set Timeframe', desc: 'Longer timeframes = higher multipliers.' },
+                  { num: '4', title: 'Win Rewards', desc: 'Correct predictions earn instant payouts.' },
+                ].map((step, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-purple flex items-center justify-center font-bold text-lg flex-shrink-0 shadow-lg">
+                      {step.num}
+                    </div>
+                    <div>
+                      <div className="font-bold mb-1">{step.title}</div>
+                      <div className="text-sm text-gray-400">{step.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Available Timeframes */}
+            <div>
+              <h3 className="text-2xl font-bold mb-6">Available Timeframes</h3>
+              <div className="space-y-3">
+                {[
+                  { time: '5 Minutes', multiplier: '1.1x' },
+                  { time: '15 Minutes', multiplier: '1.3x' },
+                  { time: '1 Hour', multiplier: '1.5x' },
+                  { time: '4 Hours', multiplier: '2.0x' },
+                  { time: '24 Hours', multiplier: '3.0x' },
+                ].map((tf, i) => (
+                  <div key={i} className="bg-brand-bg-card border border-brand-purple-900/50 rounded-xl p-4 hover:border-brand-purple-500 transition-all flex items-center justify-between group cursor-pointer">
+                    <span className="font-semibold">{tf.time}</span>
+                    <span className="px-3 py-1 bg-brand-purple-500/20 text-brand-purple-400 rounded-lg font-bold border border-brand-purple-500/30 group-hover:bg-brand-purple-500/30 transition-colors">
+                      {tf.multiplier}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 text-sm text-gray-400 text-center">
+                💡 Longer timeframes = Higher rewards
+              </div>
+            </div>
+          </div>
+
+          {/* Active Markets Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold">Active Markets</h3>
+            <Link href="/crypto" className="text-brand-purple-400 hover:text-brand-purple-300 font-semibold transition-colors flex items-center gap-1">
+              View All <span>→</span>
+            </Link>
+          </div>
+
+          {/* Market Cards Grid */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            {/* Bitcoin Card */}
+            <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-6 shadow-xl hover:border-brand-purple-500 transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
+                    <span className="text-green-500 font-bold">BTC</span>
+                  </div>
                   <div>
-                    <div className="text-xl font-semibold text-gray-300">Bitcoin</div>
-                    <div className="text-3xl font-bold">$45,234.50</div>
+                    <div className="text-sm text-gray-400">Bitcoin</div>
+                    <div className="text-2xl font-bold">$45,234.50</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-brand-success text-2xl font-bold">+2.5%</div>
-                  <div className="text-sm text-gray-400">Expires in 2h 15m</div>
+                  <div className="text-brand-success text-lg font-bold">+6.5%</div>
+                  <div className="text-xs text-gray-400">⏱ 2h 15m</div>
                 </div>
               </div>
 
-              {/* Chart Preview */}
-              <div className="mb-6 bg-brand-bg-secondary/50 rounded-xl p-4">
-                <ChartPreview trend="up" className="w-full h-24" />
-              </div>
-
-              {/* Bull vs Bear Progress */}
-              <div className="mb-6">
-                <div className="flex justify-between text-sm font-semibold mb-2">
-                  <span className="text-brand-success flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 3l7 7-7 7V3z"/></svg>
-                    Bull 65%
-                  </span>
-                  <span className="text-brand-error flex items-center gap-1">
-                    Bear 35%
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 17l-7-7 7-7v14z"/></svg>
-                  </span>
+              <div className="mb-4">
+                <div className="flex justify-between text-xs font-semibold mb-2">
+                  <span className="text-brand-success">🐂 Bull 65%</span>
+                  <span className="text-brand-error">🐻 Bear 35%</span>
                 </div>
-                <div className="h-4 bg-brand-bg-secondary rounded-full overflow-hidden">
+                <div className="h-2 bg-brand-bg-secondary rounded-full overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-brand-success to-green-400" style={{ width: '65%' }}></div>
                 </div>
               </div>
 
-              {/* Bet Buttons */}
-              <div className="grid grid-cols-2 gap-4">
-                <Link href="/crypto" className="py-4 bg-brand-success/20 border-2 border-brand-success rounded-xl font-bold text-center hover:bg-brand-success/30 transition-all flex items-center justify-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <Link href="/crypto" className="py-3 bg-brand-success/20 border-2 border-brand-success rounded-xl font-bold text-center hover:bg-brand-success/30 transition-all text-sm">
                   Bet Bull
                 </Link>
-                <Link href="/crypto" className="py-4 bg-brand-error/20 border-2 border-brand-error rounded-xl font-bold text-center hover:bg-brand-error/30 transition-all flex items-center justify-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
+                <Link href="/crypto" className="py-3 bg-brand-error/20 border-2 border-brand-error rounded-xl font-bold text-center hover:bg-brand-error/30 transition-all text-sm">
                   Bet Bear
                 </Link>
               </div>
 
-              <div className="mt-4 text-center text-sm text-gray-400">
+              <div className="text-center text-xs text-gray-400">
                 24h Volume: $2.3B
+              </div>
+            </div>
+
+            {/* Solana Card */}
+            <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-6 shadow-xl hover:border-brand-purple-500 transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <SolanaLogo className="w-12 h-12" />
+                  <div>
+                    <div className="text-sm text-gray-400">Solana</div>
+                    <div className="text-2xl font-bold">$98.45</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-brand-error text-lg font-bold">-2.1%</div>
+                  <div className="text-xs text-gray-400">⏱ 3h 30m</div>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex justify-between text-xs font-semibold mb-2">
+                  <span className="text-brand-success">🐂 Bull 42%</span>
+                  <span className="text-brand-error">🐻 Bear 58%</span>
+                </div>
+                <div className="h-2 bg-brand-bg-secondary rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-brand-success to-green-400" style={{ width: '42%' }}></div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <Link href="/crypto" className="py-3 bg-brand-success/20 border-2 border-brand-success rounded-xl font-bold text-center hover:bg-brand-success/30 transition-all text-sm">
+                  Bet Bull
+                </Link>
+                <Link href="/crypto" className="py-3 bg-brand-error/20 border-2 border-brand-error rounded-xl font-bold text-center hover:bg-brand-error/30 transition-all text-sm">
+                  Bet Bear
+                </Link>
+              </div>
+
+              <div className="text-center text-xs text-gray-400">
+                24h Volume: $450M
               </div>
             </div>
           </div>
 
           <div className="text-center">
             <Link href="/crypto" className="inline-block px-8 py-4 bg-gradient-purple rounded-xl font-semibold hover:shadow-glow-purple transition-all">
-              View All Markets
+              View All Markets →
             </Link>
           </div>
         </div>
