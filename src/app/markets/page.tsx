@@ -33,11 +33,8 @@ export default function LandingPage() {
               </a>
             </nav>
 
-            {/* Auth Buttons */}
+            {/* Wallet Connection */}
             <div className="flex items-center gap-4">
-              <button className="hidden md:block hover:text-brand-purple-500 transition-colors">
-                Sign In
-              </button>
               <ConnectButton />
             </div>
           </div>
