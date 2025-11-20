@@ -13,7 +13,13 @@
       "Bash(git commit:*)",
       "Bash(forge build:*)",
       "Bash(git push:*)",
-      "WebFetch(domain:www.figma.com)"
+      "WebFetch(domain:www.figma.com)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(git restore:*)",
+      "Bash(ffmpeg:*)",
+      "Bash(source:*)",
+      "Bash(forge init:*)"
     ],
     "deny": [],
     "ask": []
