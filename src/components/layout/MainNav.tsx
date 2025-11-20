@@ -32,27 +32,7 @@ export function MainNav() {
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
-                📊 Markets
-              </Link>
-              <Link
-                href="/wagers"
-                className={`font-medium transition-colors ${
-                  isActive('/wagers')
-                    ? 'text-green-600 dark:text-green-400'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                }`}
-              >
-                🤝 P2P Wagers
-              </Link>
-              <Link
-                href="/crypto"
-                className={`font-medium transition-colors ${
-                  isActive('/crypto')
-                    ? 'text-purple-600 dark:text-purple-400'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                }`}
-              >
-                📈 Crypto Predictions
+                🏠 Home
               </Link>
             </nav>
           </div>
@@ -70,27 +50,7 @@ export function MainNav() {
                 : 'text-gray-600 dark:text-gray-400'
             }`}
           >
-            📊 Markets
-          </Link>
-          <Link
-            href="/wagers"
-            className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-colors ${
-              isActive('/wagers')
-                ? 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            🤝 Wagers
-          </Link>
-          <Link
-            href="/crypto"
-            className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-colors ${
-              isActive('/crypto')
-                ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            📈 Crypto
+            🏠 Home
           </Link>
         </nav>
       </div>
