@@ -322,15 +322,45 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { icon: '✅', title: 'Provably Fair', desc: 'All outcomes are verifiable on-chain. Smart contracts ensure complete transparency and fairness.', gradient: 'bg-gradient-green' },
-              { icon: '⚡', title: 'Instant Settlements', desc: 'Winners receive payouts immediately. No waiting, no delays, just instant crypto rewards.', gradient: 'bg-gradient-orange' },
-              { icon: '🔒', title: 'Secure & Trustless', desc: 'Your funds are protected by battle-tested smart contracts. Non-custodial, always in your control.', gradient: 'bg-gradient-blue' },
-              { icon: '💰', title: 'Low Fees', desc: 'Only 2% platform fee on winnings. Keep more of your profits with transparent pricing.', gradient: 'bg-gradient-pink' },
-              { icon: '👥', title: 'Community Driven', desc: 'Join thousands of bettors worldwide. Chat, compete, and build your reputation on-chain.', gradient: 'bg-gradient-red' },
-              { icon: '🎁', title: 'Rewards Program', desc: 'Earn loyalty points with every bet. Unlock exclusive perks and cashback rewards.', gradient: 'bg-gradient-violet' },
+              {
+                icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+                title: 'Provably Fair',
+                desc: 'All outcomes are verifiable on-chain. Smart contracts ensure complete transparency and fairness.',
+                gradient: 'bg-gradient-green'
+              },
+              {
+                icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
+                title: 'Instant Settlements',
+                desc: 'Winners receive payouts immediately. No waiting, no delays, just instant crypto rewards.',
+                gradient: 'bg-gradient-orange'
+              },
+              {
+                icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>,
+                title: 'Secure & Trustless',
+                desc: 'Your funds are protected by battle-tested smart contracts. Non-custodial, always in your control.',
+                gradient: 'bg-gradient-blue'
+              },
+              {
+                icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>,
+                title: 'Low Fees',
+                desc: 'Only 2% platform fee on winnings. Keep more of your profits with transparent pricing.',
+                gradient: 'bg-gradient-pink'
+              },
+              {
+                icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>,
+                title: 'Community Driven',
+                desc: 'Join thousands of bettors worldwide. Chat, compete, and build your reputation on-chain.',
+                gradient: 'bg-gradient-red'
+              },
+              {
+                icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" /></svg>,
+                title: 'Rewards Program',
+                desc: 'Earn loyalty points with every bet. Unlock exclusive perks and cashback rewards.',
+                gradient: 'bg-gradient-violet'
+              },
             ].map((feature, i) => (
               <div key={i} className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl p-6 hover:border-brand-purple-500 transition-all">
-                <div className={`w-16 h-16 rounded-xl ${feature.gradient} flex items-center justify-center text-3xl mb-4`}>
+                <div className={`w-16 h-16 rounded-2xl ${feature.gradient} flex items-center justify-center text-white mb-4 shadow-lg`}>
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>

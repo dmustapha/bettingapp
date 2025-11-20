@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
+import { Inter } from 'next/font/google';
 import "./globals.css";
 import '@rainbow-me/rainbowkit/styles.css';
 import { Providers } from './providers';
 
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
 export const metadata: Metadata = {
-  title: "VibeCoding Betting App",
-  description: "Decentralized betting platform on Base chain",
+  title: "CryptoWager - Decentralized Betting Platform",
+  description: "Bet smart, win big. The ultimate crypto betting platform on Base chain.",
 };
 
 export default function RootLayout({
@@ -14,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className={inter.variable}>
+      <body className={inter.className}>
         <Providers>{children}</Providers>
       </body>
     </html>
