@@ -32,7 +32,7 @@ export default function TokenDetailPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-dark text-white">
       <MainNav />
 
       <main className="flex-1 container mx-auto px-4 py-8">
@@ -46,10 +46,10 @@ export default function TokenDetailPage() {
           <div className="flex items-center gap-4 mb-2">
             <span className="text-5xl">{token.icon}</span>
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-4xl font-bold text-white">
                 {token.name}
               </h1>
-              <p className="text-xl text-gray-600 dark:text-gray-400">{symbol}</p>
+              <p className="text-xl text-gray-400">{symbol}</p>
             </div>
           </div>
         </div>
@@ -66,33 +66,33 @@ export default function TokenDetailPage() {
           </div>
 
           {/* Quick Stats */}
-          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          <div className="lg:col-span-2 bg-brand-bg-card rounded-xl shadow-lg p-6 border border-brand-purple-900/30">
+            <h2 className="text-xl font-bold text-white mb-4">
               About {token.name}
             </h2>
             {token.description && (
-              <p className="text-gray-600 dark:text-gray-400 mb-4">{token.description}</p>
+              <p className="text-gray-400 mb-4">{token.description}</p>
             )}
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                <div className="text-gray-600 dark:text-gray-400 mb-1">Platform</div>
-                <div className="font-semibold text-gray-900 dark:text-gray-100">Base Chain</div>
+                <div className="text-gray-400 mb-1">Platform</div>
+                <div className="font-semibold text-white">Base Chain</div>
               </div>
               <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <div className="text-gray-600 dark:text-gray-400 mb-1">Category</div>
-                <div className="font-semibold text-gray-900 dark:text-gray-100">
+                <div className="text-gray-400 mb-1">Category</div>
+                <div className="font-semibold text-white">
                   {token.category}
                 </div>
               </div>
               <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <div className="text-gray-600 dark:text-gray-400 mb-1">Oracle Support</div>
-                <div className="font-semibold text-gray-900 dark:text-gray-100">
+                <div className="text-gray-400 mb-1">Oracle Support</div>
+                <div className="font-semibold text-white">
                   {token.chainlinkPriceFeed ? 'Chainlink' : 'CoinGecko'}
                 </div>
               </div>
               <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-                <div className="text-gray-600 dark:text-gray-400 mb-1">Min Bet</div>
-                <div className="font-semibold text-gray-900 dark:text-gray-100">
+                <div className="text-gray-400 mb-1">Min Bet</div>
+                <div className="font-semibold text-white">
                   {token.minBetAmount || '0.01'} ETH
                 </div>
               </div>

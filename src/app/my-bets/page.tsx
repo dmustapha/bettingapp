@@ -19,9 +19,9 @@ function UserMarketBets({ marketId, userAddress }: { marketId: number; userAddre
 
   return (
     <Link href={`/markets/${marketId}`}>
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-blue-500">
+      <div className="bg-brand-bg-card rounded-xl shadow-lg p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-brand-purple-500">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h3 className="text-lg font-semibold text-white mb-2">
             {market?.description || `Market #${marketId}`}
           </h3>
           <div className="flex items-center gap-2 text-sm">
@@ -55,21 +55,21 @@ function UserMarketBets({ marketId, userAddress }: { marketId: number; userAddre
                 }`}>
                   {bet.outcome ? 'YES' : 'NO'}
                 </span>
-                <span className="text-gray-900 dark:text-gray-100 font-semibold">
+                <span className="text-white font-semibold">
                   {formatEth(bet.amount)} ETH
                 </span>
               </div>
-              <span className="text-gray-600 dark:text-gray-400 text-xs">
+              <span className="text-gray-400 text-xs">
                 {formatDate(bet.timestamp)}
               </span>
             </div>
           ))}
         </div>
 
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+        <div className="border-t border-brand-purple-900/30 pt-4">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Total Bet:</span>
-            <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+            <span className="text-sm text-gray-400">Total Bet:</span>
+            <span className="text-lg font-bold text-white">
               {formatEth(totalBet)} ETH
             </span>
           </div>
@@ -102,7 +102,7 @@ export default function MyBetsPage() {
   if (!isContractDeployed()) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-        <header className="border-b border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+        <header className="border-b border-brand-purple-900/30 bg-brand-bg-primary/80 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
               <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -114,12 +114,12 @@ export default function MyBetsPage() {
         </header>
 
         <main className="container mx-auto px-4 py-8">
-          <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+          <div className="max-w-2xl mx-auto bg-brand-bg-card rounded-xl shadow-lg p-8 text-center">
             <div className="text-6xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+            <h2 className="text-2xl font-bold mb-4 text-white">
               Smart Contract Not Deployed
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-gray-400 mb-6">
               The betting smart contract has not been deployed yet. Please deploy the contract first.
             </p>
             <Link
@@ -137,7 +137,7 @@ export default function MyBetsPage() {
   if (!isConnected) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-        <header className="border-b border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+        <header className="border-b border-brand-purple-900/30 bg-brand-bg-primary/80 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
               <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -149,12 +149,12 @@ export default function MyBetsPage() {
         </header>
 
         <main className="container mx-auto px-4 py-8">
-          <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
+          <div className="max-w-2xl mx-auto bg-brand-bg-card rounded-xl shadow-lg p-12 text-center">
             <div className="text-6xl mb-4">🔗</div>
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+            <h2 className="text-2xl font-bold mb-4 text-white">
               Connect Your Wallet
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-gray-400 mb-6">
               Please connect your wallet to view your betting history
             </p>
             <ConnectButton />
@@ -169,7 +169,7 @@ export default function MyBetsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <header className="border-b border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+      <header className="border-b border-brand-purple-900/30 bg-brand-bg-primary/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -184,10 +184,10 @@ export default function MyBetsPage() {
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              <h1 className="text-3xl font-bold text-white mb-2">
                 My Bets
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-400">
                 Wallet: {shortenAddress(address || '')}
               </p>
             </div>
@@ -201,12 +201,12 @@ export default function MyBetsPage() {
 
           <div className="space-y-6">
             {marketIds.length === 0 ? (
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
+              <div className="bg-brand-bg-card rounded-xl shadow-lg p-12 text-center">
                 <div className="text-6xl mb-4">📊</div>
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+                <h2 className="text-2xl font-bold mb-4 text-white">
                   No Markets Available
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                <p className="text-gray-400 mb-6">
                   There are no markets yet. Be the first to create one!
                 </p>
                 <Link

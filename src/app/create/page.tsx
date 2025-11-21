@@ -80,25 +80,31 @@ export default function CreateMarketPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-dark text-white">
       <MainNav />
 
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="mb-6">
-            <Link href="/markets" className="text-blue-600 hover:text-blue-700 dark:text-blue-400">
-              ← Back to Markets
+            <Link href="/markets" className="text-brand-purple-400 hover:text-brand-purple-300 transition-colors flex items-center gap-2">
+              <span>←</span>
+              <span>Back to Markets</span>
             </Link>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">
-              Create Betting Market
-            </h1>
+          <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-xl p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center text-2xl shadow-lg">
+                📊
+              </div>
+              <h1 className="text-3xl font-bold">
+                Create Betting Market
+              </h1>
+            </div>
 
             {!isConnected ? (
               <div className="text-center py-8">
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-gray-400 mb-4">
                   Please connect your wallet to create a market
                 </p>
                 <ConnectButton />
@@ -106,7 +112,7 @@ export default function CreateMarketPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
                     Market Question *
                   </label>
                   <input
@@ -114,22 +120,22 @@ export default function CreateMarketPage() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="e.g., Will ETH reach $5000 by end of 2025?"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
                     required
                   />
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-gray-400 mt-1">
                     Be clear and specific. This should be a YES/NO question.
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
                     Category *
                   </label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
                     required
                   >
                     <option value="Sports">Sports</option>
@@ -138,14 +144,14 @@ export default function CreateMarketPage() {
                     <option value="Crypto">Crypto</option>
                     <option value="Custom">Custom</option>
                   </select>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-gray-400 mt-1">
                     Choose the category that best fits your market
                   </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-semibold mb-2 text-gray-300">
                       End Date *
                     </label>
                     <input
@@ -153,20 +159,20 @@ export default function CreateMarketPage() {
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-semibold mb-2 text-gray-300">
                       End Time *
                     </label>
                     <input
                       type="time"
                       value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
                       required
                     />
                   </div>
@@ -180,7 +186,7 @@ export default function CreateMarketPage() {
                 />
 
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
                     Minimum Bet ({selectedToken.symbol}) *
                   </label>
                   <div className="relative">
@@ -190,7 +196,7 @@ export default function CreateMarketPage() {
                       min="0.001"
                       value={minBet}
                       onChange={(e) => setMinBet(e.target.value)}
-                      className="w-full px-4 py-3 pr-16 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 pr-16 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
                       required
                     />
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
@@ -198,16 +204,17 @@ export default function CreateMarketPage() {
                       <span className="font-semibold text-gray-400">{selectedToken.symbol}</span>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-gray-400 mt-1">
                     Minimum amount users must bet (recommended: 0.01 {selectedToken.symbol})
                   </p>
                 </div>
 
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-                  <h3 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">
-                    Important Notes:
+                <div className="bg-brand-purple-500/10 border border-brand-purple-500/30 rounded-xl p-4">
+                  <h3 className="font-semibold text-brand-purple-300 mb-2 flex items-center gap-2">
+                    <span>💡</span>
+                    <span>Important Notes:</span>
                   </h3>
-                  <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
+                  <ul className="text-sm text-gray-300 space-y-1">
                     <li>• You will be the market creator and can resolve it after the end time</li>
                     <li>• A 2% platform fee will be deducted from the winning pool</li>
                     <li>• Make sure the question has a clear YES/NO outcome</li>
@@ -216,17 +223,19 @@ export default function CreateMarketPage() {
                 </div>
 
                 {error && (
-                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                    <p className="text-red-800 dark:text-red-200 text-sm">
-                      Error: {error.message}
+                  <div className="bg-brand-error/10 border border-brand-error/30 rounded-xl p-4">
+                    <p className="text-brand-error text-sm flex items-center gap-2">
+                      <span>❌</span>
+                      <span>Error: {error.message}</span>
                     </p>
                   </div>
                 )}
 
                 {isSuccess && (
-                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                    <p className="text-green-800 dark:text-green-200 text-sm">
-                      Market created successfully! Redirecting to markets...
+                  <div className="bg-brand-success/10 border border-brand-success/30 rounded-xl p-4">
+                    <p className="text-brand-success text-sm flex items-center gap-2">
+                      <span>✅</span>
+                      <span>Market created successfully! Redirecting to markets...</span>
                     </p>
                   </div>
                 )}
@@ -234,9 +243,19 @@ export default function CreateMarketPage() {
                 <button
                   type="submit"
                   disabled={isPending || isConfirming}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-primary hover:shadow-glow-primary text-white font-bold py-4 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
                 >
-                  {isPending || isConfirming ? 'Creating Market...' : 'Create Market'}
+                  {isPending || isConfirming ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <span>Creating Market...</span>
+                    </span>
+                  ) : (
+                    '📊 Create Market'
+                  )}
                 </button>
               </form>
             )}

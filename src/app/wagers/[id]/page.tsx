@@ -107,7 +107,7 @@ export default function WagerDetailPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-dark text-white">
       <MainNav />
 
       <main className="flex-1 container mx-auto px-4 py-8">
@@ -119,7 +119,7 @@ export default function WagerDetailPage() {
           </div>
 
           {/* Wager Info */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-6">
+          <div className="bg-brand-bg-card rounded-xl shadow-lg p-8 mb-6">
             <div className="flex items-start justify-between mb-6">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-3">
@@ -137,10 +137,10 @@ export default function WagerDetailPage() {
                     </span>
                   )}
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                <h1 className="text-3xl font-bold text-white mb-4">
                   {wager.claim}
                 </h1>
-                <div className="flex items-center gap-3 flex-wrap text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-3 flex-wrap text-sm text-gray-400">
                   <span>Created {formatDate(wager.createdAt)}</span>
                   <span>•</span>
                   <span>Expires {formatDate(wager.expiryTime)}</span>
@@ -217,9 +217,9 @@ export default function WagerDetailPage() {
 
           {/* Accept Section */}
           {canAccept && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Accept This Wager</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <div className="bg-brand-bg-card rounded-xl shadow-lg p-8 mb-6">
+              <h2 className="text-2xl font-bold text-white mb-4">Accept This Wager</h2>
+              <p className="text-gray-400 mb-6">
                 To accept this wager, you must match the stake amount. If you win, you'll receive the full pool (minus 2% platform fee).
               </p>
               <button
@@ -241,9 +241,9 @@ export default function WagerDetailPage() {
 
           {/* Resolve Section (for resolvers) */}
           {canResolve && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Resolve Wager</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <div className="bg-brand-bg-card rounded-xl shadow-lg p-8 mb-6">
+              <h2 className="text-2xl font-bold text-white mb-4">Resolve Wager</h2>
+              <p className="text-gray-400 mb-6">
                 As the resolver, you decide who wins this wager. Choose carefully.
               </p>
               <div className="space-y-4">
@@ -256,7 +256,7 @@ export default function WagerDetailPage() {
                   }`}
                 >
                   <div className="text-lg font-bold text-blue-600">User A Wins</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">{shortenAddress(wager.userA)}</div>
+                  <div className="text-sm text-gray-400">{shortenAddress(wager.userA)}</div>
                 </button>
                 <button
                   onClick={() => setSelectedWinner(wager.userB)}
@@ -267,7 +267,7 @@ export default function WagerDetailPage() {
                   }`}
                 >
                   <div className="text-lg font-bold text-green-600">User B Wins</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">{shortenAddress(wager.userB)}</div>
+                  <div className="text-sm text-gray-400">{shortenAddress(wager.userB)}</div>
                 </button>
                 <button
                   onClick={handleResolve}
@@ -289,9 +289,9 @@ export default function WagerDetailPage() {
 
           {/* Cancel Section */}
           {canCancel && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Cancel Wager</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <div className="bg-brand-bg-card rounded-xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-white mb-4">Cancel Wager</h2>
+              <p className="text-gray-400 mb-6">
                 This wager has expired without being accepted. You can cancel it to get your stake back.
               </p>
               <button

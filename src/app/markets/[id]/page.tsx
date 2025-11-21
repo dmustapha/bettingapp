@@ -107,7 +107,7 @@ export default function MarketDetailPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-dark text-white">
       <MainNav />
 
       <main className="flex-1 container mx-auto px-4 py-8">
@@ -119,7 +119,7 @@ export default function MarketDetailPage() {
           </div>
 
           {/* Market Info */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-6">
+          <div className="bg-brand-bg-card rounded-xl shadow-lg p-8 mb-6">
             <div className="flex items-start justify-between mb-6">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-3">
@@ -136,10 +136,10 @@ export default function MarketDetailPage() {
                     {market.resolved ? 'Resolved' : ended ? 'Ended' : 'Active'}
                   </span>
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                <h1 className="text-3xl font-bold text-white mb-4">
                   {market.description}
                 </h1>
-                <div className="flex items-center gap-3 flex-wrap text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-3 flex-wrap text-sm text-gray-400">
                   <span>Created {formatDate(market.createdAt)}</span>
                   <span>•</span>
                   <span>Creator: {shortenAddress(market.creator)}</span>
@@ -166,20 +166,20 @@ export default function MarketDetailPage() {
             </div>
 
             {/* Market Stats */}
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-brand-purple-900/30">
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatEth(totalPool)} ETH</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Total Pool</div>
+                <div className="text-2xl font-bold text-white">{formatEth(totalPool)} ETH</div>
+                <div className="text-sm text-gray-400">Total Pool</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatEth(market.minBet)} ETH</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Min Bet</div>
+                <div className="text-2xl font-bold text-white">{formatEth(market.minBet)} ETH</div>
+                <div className="text-sm text-gray-400">Min Bet</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <div className="text-2xl font-bold text-white">
                   {ended ? 'Ended' : getTimeRemaining(market.endTime)}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="text-sm text-gray-400">
                   {ended ? formatDate(market.endTime) : 'Time Left'}
                 </div>
               </div>
@@ -203,8 +203,8 @@ export default function MarketDetailPage() {
 
           {/* Betting Section */}
           {canBet && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Place Your Bet</h2>
+            <div className="bg-brand-bg-card rounded-xl shadow-lg p-8 mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">Place Your Bet</h2>
 
               <div className="space-y-6">
                 <div>
@@ -221,7 +221,7 @@ export default function MarketDetailPage() {
                       }`}
                     >
                       <div className="text-xl font-bold text-green-600">YES</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">{yesOdds}% probability</div>
+                      <div className="text-sm text-gray-400">{yesOdds}% probability</div>
                     </button>
                     <button
                       onClick={() => setSelectedOutcome(false)}
@@ -232,7 +232,7 @@ export default function MarketDetailPage() {
                       }`}
                     >
                       <div className="text-xl font-bold text-red-600">NO</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">{noOdds}% probability</div>
+                      <div className="text-sm text-gray-400">{noOdds}% probability</div>
                     </button>
                   </div>
                 </div>
@@ -247,7 +247,7 @@ export default function MarketDetailPage() {
                     min={formatEth(market.minBet)}
                     value={betAmount}
                     onChange={(e) => setBetAmount(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                     Minimum: {formatEth(market.minBet)} ETH
@@ -275,9 +275,9 @@ export default function MarketDetailPage() {
 
           {/* Resolve Section (for creators) */}
           {canResolve && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Resolve Market</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <div className="bg-brand-bg-card rounded-xl shadow-lg p-8 mb-6">
+              <h2 className="text-2xl font-bold text-white mb-6">Resolve Market</h2>
+              <p className="text-gray-400 mb-6">
                 As the market creator, you can now resolve this market and determine the winning outcome.
               </p>
               <div className="flex gap-4">
@@ -301,8 +301,8 @@ export default function MarketDetailPage() {
 
           {/* User Bets & Claim Section */}
           {isConnected && userBets && userBets.length > 0 && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Your Bets</h2>
+            <div className="bg-brand-bg-card rounded-xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-white mb-6">Your Bets</h2>
 
               <div className="space-y-4 mb-6">
                 {userBets.map((bet, index) => (
@@ -313,10 +313,10 @@ export default function MarketDetailPage() {
                       }`}>
                         {bet.outcome ? 'YES' : 'NO'}
                       </span>
-                      <span className="ml-3 text-gray-900 dark:text-gray-100 font-semibold">
+                      <span className="ml-3 text-white font-semibold">
                         {formatEth(bet.amount)} ETH
                       </span>
-                      <span className="ml-3 text-sm text-gray-600 dark:text-gray-400">
+                      <span className="ml-3 text-sm text-gray-400">
                         {formatDate(bet.timestamp)}
                       </span>
                     </div>
@@ -327,10 +327,10 @@ export default function MarketDetailPage() {
                 ))}
               </div>
 
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <div className="border-t border-brand-purple-900/30 pt-4">
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-gray-700 dark:text-gray-300">Total Bet:</span>
-                  <span className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                  <span className="text-xl font-bold text-white">
                     {formatEth(userTotalBets)} ETH
                   </span>
                 </div>
