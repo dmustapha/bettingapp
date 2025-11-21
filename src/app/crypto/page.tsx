@@ -617,24 +617,24 @@ function ActivePredictionCard({ predictionId }: { predictionId: number }) {
   const { data: prediction, refetch } = usePrediction(predictionId);
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
 
-  if (!prediction) return null;
-
-  // Handle both array and object formats
+  // Extract data before any conditional returns
   let id, tokenSymbol, description, startPrice, endTime, totalYesPool, totalNoPool, resolved, winningOutcome, actualEndPrice, creator;
 
-  if (Array.isArray(prediction)) {
-    [id, tokenSymbol, description, startPrice, endTime, totalYesPool, totalNoPool, resolved, winningOutcome, actualEndPrice, creator] = prediction;
-  } else {
-    // Object format
-    ({ id, tokenSymbol, description, startPrice, endTime, totalYesPool, totalNoPool, resolved, winningOutcome, actualEndPrice, creator } = prediction as any);
+  if (prediction) {
+    if (Array.isArray(prediction)) {
+      [id, tokenSymbol, description, startPrice, endTime, totalYesPool, totalNoPool, resolved, winningOutcome, actualEndPrice, creator] = prediction;
+    } else {
+      // Object format
+      ({ id, tokenSymbol, description, startPrice, endTime, totalYesPool, totalNoPool, resolved, winningOutcome, actualEndPrice, creator } = prediction as any);
+    }
   }
 
-  const isExpired = Number(endTime) < Date.now() / 1000;
-  const totalPool = totalYesPool + totalNoPool;
+  const isExpired = endTime ? Number(endTime) < Date.now() / 1000 : false;
+  const totalPool = (totalYesPool || 0n) + (totalNoPool || 0n);
 
-  // Countdown timer for active predictions
+  // Countdown timer for active predictions - must be called before any conditional returns
   useEffect(() => {
-    if (!resolved && !isExpired) {
+    if (prediction && endTime && !resolved && !isExpired) {
       const interval = setInterval(() => {
         const remaining = Number(endTime) - Math.floor(Date.now() / 1000);
         setTimeRemaining(remaining);
@@ -648,7 +648,10 @@ function ActivePredictionCard({ predictionId }: { predictionId: number }) {
 
       return () => clearInterval(interval);
     }
-  }, [resolved, isExpired, endTime, refetch]);
+  }, [prediction, resolved, isExpired, endTime, refetch]);
+
+  // Now we can do conditional returns AFTER all hooks
+  if (!prediction) return null;
 
   const formatTimeRemaining = (seconds: number) => {
     if (seconds < 0) return 'Expired';
