@@ -481,6 +481,7 @@ export default function CryptoPredictionsPage() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<keyof typeof TIMEFRAMES>('1h');
   const [betAmount, setBetAmount] = useState('0.01');
   const [showTokenDetails, setShowTokenDetails] = useState<{symbol: string; name: string; icon: string} | null>(null);
+  const [showCustomSearch, setShowCustomSearch] = useState(false);
 
   const handleCreateCustomPrediction = (e: React.FormEvent) => {
     e.preventDefault();
@@ -533,10 +534,48 @@ export default function CryptoPredictionsPage() {
             ))}
           </div>
 
-          {/* Custom Token Search Subsection */}
-          <div className="mt-12">
-            <CustomTokenSearch />
+          {/* Custom Token Search Toggle Button */}
+          <div className="mt-12 text-center">
+            {!showCustomSearch ? (
+              <button
+                onClick={() => setShowCustomSearch(true)}
+                className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-brand-purple-600 to-brand-pink-600 hover:from-brand-purple-700 hover:to-brand-pink-700 rounded-xl shadow-lg hover:shadow-glow-purple transition-all text-white font-semibold text-lg"
+              >
+                <span className="text-2xl">🔍</span>
+                <span>Search Custom Tokens</span>
+                <svg
+                  className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowCustomSearch(false)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-brand-bg-card border border-brand-purple-800 hover:border-brand-purple-600 rounded-xl transition-all text-gray-300 hover:text-white font-medium"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+                <span>Hide Custom Search</span>
+              </button>
+            )}
           </div>
+
+          {/* Custom Token Search Subsection */}
+          {showCustomSearch && (
+            <div className="mt-8">
+              <CustomTokenSearch />
+            </div>
+          )}
         </section>
 
         {/* Divider */}
