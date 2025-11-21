@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAccount, useChainId } from 'wagmi';
@@ -167,14 +167,33 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
     try {
       // Create prediction and place bet
       const predictionOutcome = selectedDirection === 'up';
-      const description = `${token.symbol} will go ${selectedDirection.toUpperCase()} in ${selectedTimeframe}`;
+      const timeframeSeconds = getTimeframeSeconds();
+      const description = `${token.symbol} will go ${selectedDirection.toUpperCase()} in ${selectedTimeframe === 'custom' ? `${customHours}h` : selectedTimeframe}`;
 
-      // This would need to be integrated with your contract logic
-      alert(`Placing ${selectedDirection.toUpperCase()} bet on ${token.symbol} for ${betAmount} ETH (${selectedTimeframe})`);
+      // Create the prediction first
+      await createPrediction(
+        token.symbol,
+        description,
+        BigInt(timeframeSeconds),
+        predictionOutcome,
+        betAmount
+      );
 
-      // Reset after successful bet
-      setShowBetConfig(false);
-      setSelectedDirection(null);
+      // Wait for transaction to complete
+      // Then scroll to active predictions section
+      if (isSuccess) {
+        // Reset the form
+        setShowBetConfig(false);
+        setSelectedDirection(null);
+
+        // Scroll to active predictions section after a short delay
+        setTimeout(() => {
+          const activePredictionsSection = document.getElementById('active-predictions');
+          if (activePredictionsSection) {
+            activePredictionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 1000);
+      }
     } catch (error) {
       console.error('Error placing bet:', error);
     }
@@ -595,26 +614,50 @@ function CustomTokenSearch() {
 
 // Active Prediction Card Component
 function ActivePredictionCard({ predictionId }: { predictionId: number }) {
-  const { data: prediction } = usePrediction(predictionId);
+  const { data: prediction, refetch } = usePrediction(predictionId);
+  const [timeRemaining, setTimeRemaining] = useState<number>(0);
 
   if (!prediction) return null;
 
-  const [
-    id,
-    tokenSymbol,
-    description,
-    startPrice,
-    endTime,
-    totalYesPool,
-    totalNoPool,
-    resolved,
-    winningOutcome,
-    actualEndPrice,
-    creator,
-  ] = prediction as any[];
+  // Handle both array and object formats
+  let id, tokenSymbol, description, startPrice, endTime, totalYesPool, totalNoPool, resolved, winningOutcome, actualEndPrice, creator;
+
+  if (Array.isArray(prediction)) {
+    [id, tokenSymbol, description, startPrice, endTime, totalYesPool, totalNoPool, resolved, winningOutcome, actualEndPrice, creator] = prediction;
+  } else {
+    // Object format
+    ({ id, tokenSymbol, description, startPrice, endTime, totalYesPool, totalNoPool, resolved, winningOutcome, actualEndPrice, creator } = prediction as any);
+  }
 
   const isExpired = Number(endTime) < Date.now() / 1000;
   const totalPool = totalYesPool + totalNoPool;
+
+  // Countdown timer for active predictions
+  useEffect(() => {
+    if (!resolved && !isExpired) {
+      const interval = setInterval(() => {
+        const remaining = Number(endTime) - Math.floor(Date.now() / 1000);
+        setTimeRemaining(remaining);
+
+        if (remaining <= 0) {
+          clearInterval(interval);
+          // Refetch prediction data to check if it's been resolved
+          refetch();
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [resolved, isExpired, endTime, refetch]);
+
+  const formatTimeRemaining = (seconds: number) => {
+    if (seconds < 0) return 'Expired';
+    if (seconds < 60) return `${seconds}s`;
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours}h ${minutes}m`;
+  };
 
   const getStatus = () => {
     if (resolved) return { label: 'Resolved', color: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200' };
@@ -641,7 +684,14 @@ function ActivePredictionCard({ predictionId }: { predictionId: number }) {
               {description}
             </h3>
             <div className="text-sm text-gray-400">
-              <span>Ends {formatDate(endTime)}</span>
+              {!resolved && !isExpired ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-yellow-400 font-semibold">⏱️ {formatTimeRemaining(timeRemaining)}</span>
+                  <span className="text-gray-500">remaining</span>
+                </div>
+              ) : (
+                <span>Ended {formatDate(endTime)}</span>
+              )}
             </div>
           </div>
         </div>
@@ -948,7 +998,7 @@ export default function CryptoPredictionsPage() {
 
           {/* Active Predictions List */}
           {predictionCounter && Number(predictionCounter) > 0 && (
-            <div className="mt-12">
+            <div id="active-predictions" className="mt-12 scroll-mt-24">
               <h3 className="text-2xl font-bold text-white mb-6">Active Predictions</h3>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: Number(predictionCounter) }, (_, i) => i).reverse().map((id) => (
