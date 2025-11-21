@@ -2,16 +2,19 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useCreateWager } from '@/hooks/useP2PWagers';
 import { MainNav } from '@/components/layout/MainNav';
 import { Footer } from '@/components';
 import Link from 'next/link';
+import { TokenToggle } from '@/components/TokenSelector';
+import { BASE_SEPOLIA_TOKENS, TokenInfo } from '@/config/tokens.base';
 
 export default function CreateWagerPage() {
   const router = useRouter();
   const { address, isConnected } = useAccount();
+  const chainId = useChainId();
   const { createWager, isPending, isConfirming, isSuccess, error } = useCreateWager();
 
   const [claim, setClaim] = useState('');
@@ -19,6 +22,7 @@ export default function CreateWagerPage() {
   const [expiryDate, setExpiryDate] = useState('');
   const [expiryTime, setExpiryTime] = useState('');
   const [stakeAmount, setStakeAmount] = useState('0.01');
+  const [selectedToken, setSelectedToken] = useState<TokenInfo>(BASE_SEPOLIA_TOKENS.ETH);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,19 +129,32 @@ export default function CreateWagerPage() {
                   </p>
                 </div>
 
+                {/* Token Selector */}
+                <TokenToggle
+                  selectedToken={selectedToken}
+                  onTokenChange={setSelectedToken}
+                  chainId={chainId}
+                />
+
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-gray-300">
-                    Stake Amount (ETH) *
+                    Stake Amount ({selectedToken.symbol}) *
                   </label>
-                  <input
-                    type="number"
-                    step="0.001"
-                    min="0.001"
-                    value={stakeAmount}
-                    onChange={(e) => setStakeAmount(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      step="0.001"
+                      min="0.001"
+                      value={stakeAmount}
+                      onChange={(e) => setStakeAmount(e.target.value)}
+                      className="w-full px-4 py-3 pr-16 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
+                      required
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                      <span className="text-xl">{selectedToken.icon}</span>
+                      <span className="font-semibold text-gray-400">{selectedToken.symbol}</span>
+                    </div>
+                  </div>
                   <p className="text-sm text-gray-400 mt-1">
                     The amount you're betting. Your opponent must match this amount.
                   </p>
@@ -220,7 +237,7 @@ export default function CreateWagerPage() {
                       <span>Creating Wager...</span>
                     </span>
                   ) : (
-                    `🎲 Create Wager (${stakeAmount} ETH)`
+                    `🎲 Create Wager (${stakeAmount} ${selectedToken.symbol})`
                   )}
                 </button>
               </form>

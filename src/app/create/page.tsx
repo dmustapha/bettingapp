@@ -2,17 +2,20 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useCreateMarket } from '@/hooks/useBettingContract';
 import { isContractDeployed } from '@/lib/contract';
 import { MainNav } from '@/components/layout/MainNav';
 import { Footer } from '@/components';
 import Link from 'next/link';
+import { TokenToggle } from '@/components/TokenSelector';
+import { BASE_SEPOLIA_TOKENS, TokenInfo } from '@/config/tokens.base';
 
 export default function CreateMarketPage() {
   const router = useRouter();
   const { address, isConnected } = useAccount();
+  const chainId = useChainId();
   const { createMarket, isPending, isConfirming, isSuccess, error } = useCreateMarket();
 
   const [description, setDescription] = useState('');
@@ -20,6 +23,7 @@ export default function CreateMarketPage() {
   const [endDate, setEndDate] = useState('');
   const [endTime, setEndTime] = useState('');
   const [minBet, setMinBet] = useState('0.01');
+  const [selectedToken, setSelectedToken] = useState<TokenInfo>(BASE_SEPOLIA_TOKENS.ETH);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,21 +172,34 @@ export default function CreateMarketPage() {
                   </div>
                 </div>
 
+                {/* Token Selector */}
+                <TokenToggle
+                  selectedToken={selectedToken}
+                  onTokenChange={setSelectedToken}
+                  chainId={chainId}
+                />
+
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                    Minimum Bet (ETH) *
+                    Minimum Bet ({selectedToken.symbol}) *
                   </label>
-                  <input
-                    type="number"
-                    step="0.001"
-                    min="0.001"
-                    value={minBet}
-                    onChange={(e) => setMinBet(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      step="0.001"
+                      min="0.001"
+                      value={minBet}
+                      onChange={(e) => setMinBet(e.target.value)}
+                      className="w-full px-4 py-3 pr-16 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                      <span className="text-xl">{selectedToken.icon}</span>
+                      <span className="font-semibold text-gray-400">{selectedToken.symbol}</span>
+                    </div>
+                  </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Minimum amount users must bet (recommended: 0.01 ETH)
+                    Minimum amount users must bet (recommended: 0.01 {selectedToken.symbol})
                   </p>
                 </div>
 
