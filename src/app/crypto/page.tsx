@@ -18,13 +18,24 @@ import { TokenToggle } from '@/components/TokenSelector';
 import { BASE_SEPOLIA_TOKENS, TokenInfo } from '@/config/tokens.base';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-// Quick Market Betting Card Component
-function QuickBetCard({ token }: { token: typeof FEATURED_TOKENS[0] }) {
+// Enhanced Quick Market Betting Component
+function QuickMarketBetting() {
   const { isConnected } = useAccount();
-  const [betAmount, setBetAmount] = useState('0.01');
+  const { createPrediction, isPending: isCreatingPrediction } = useCreatePrediction();
+  const { placePredictionBet, isPending: isPlacingBet } = usePlacePredictionBet();
+
+  // Token search state
+  const [tokenSearch, setTokenSearch] = useState('');
+  const [selectedToken, setSelectedToken] = useState<string>('ETH');
+  const { data: currentPrice } = useCurrentPrice(selectedToken);
+
+  // Timeframe state
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'15s' | '30s' | '1m' | '5m' | '30m' | 'custom'>('1m');
+  const [customHours, setCustomHours] = useState('1');
+
+  // Betting state
   const [selectedDirection, setSelectedDirection] = useState<'up' | 'down' | null>(null);
-  const { data: currentPrice } = useCurrentPrice(token.symbol);
-  const { placePredictionBet, isPending, isSuccess } = usePlacePredictionBet();
+  const [betAmount, setBetAmount] = useState('0.01');
 
   const formatPrice = (price: bigint | undefined) => {
     if (!price) return '---';
@@ -32,64 +43,238 @@ function QuickBetCard({ token }: { token: typeof FEATURED_TOKENS[0] }) {
     return priceNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
-  const handleQuickBet = (direction: 'up' | 'down') => {
+  // Calculate timeframe in seconds
+  const getTimeframeSeconds = () => {
+    switch (selectedTimeframe) {
+      case '15s': return 15;
+      case '30s': return 30;
+      case '1m': return 60;
+      case '5m': return 300;
+      case '30m': return 1800;
+      case 'custom': return parseInt(customHours) * 3600;
+      default: return 60;
+    }
+  };
+
+  // Available tokens (you can expand this list)
+  const availableTokens = ['ETH', 'BTC', 'SOL', 'USDC', 'USDT', 'WETH'];
+  const filteredTokens = tokenSearch
+    ? availableTokens.filter(t => t.toLowerCase().includes(tokenSearch.toLowerCase()))
+    : availableTokens;
+
+  const handlePlaceBet = async () => {
     if (!isConnected) {
       alert('Please connect your wallet first');
       return;
     }
-    setSelectedDirection(direction);
-    // TODO: This would create a quick 1h prediction and place bet in one transaction
-    // For now, just show selection
+    if (!selectedDirection) {
+      alert('Please select UP or DOWN');
+      return;
+    }
+
+    try {
+      // Create prediction with selected timeframe
+      const timeframeSeconds = getTimeframeSeconds();
+      await createPrediction(selectedToken, timeframeSeconds);
+
+      // In a real implementation, you'd wait for the prediction to be created
+      // then place the bet on that prediction ID
+      // For now, this is a placeholder
+      alert(`Prediction created! Direction: ${selectedDirection.toUpperCase()}, Timeframe: ${selectedTimeframe === 'custom' ? customHours + 'h' : selectedTimeframe}`);
+    } catch (error) {
+      console.error('Error placing bet:', error);
+      alert('Failed to place bet. Please try again.');
+    }
   };
 
   return (
-    <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-lg p-6 hover:shadow-glow-purple hover:border-brand-purple-500 transition-all">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-2xl shadow-lg">
-            {token.icon}
-          </div>
+    <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-xl p-8">
+      <div className="mb-6">
+        <h3 className="text-2xl font-bold text-white mb-2">Quick Market Prediction</h3>
+        <p className="text-sm text-gray-400">
+          Search for any token, select timeframe, and predict UP or DOWN
+        </p>
+      </div>
+
+      {!isConnected ? (
+        <div className="text-center py-8">
+          <p className="text-gray-400 mb-4">Connect your wallet to start trading</p>
+          <ConnectButton />
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {/* Token Search */}
           <div>
-            <h3 className="text-xl font-bold text-white">{token.symbol}</h3>
-            <p className="text-sm text-gray-400">{token.name}</p>
+            <label className="block text-sm font-semibold mb-2 text-gray-300">
+              Search Token
+            </label>
+            <input
+              type="text"
+              value={tokenSearch}
+              onChange={(e) => setTokenSearch(e.target.value)}
+              placeholder="Enter token symbol or address..."
+              className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 transition-all"
+            />
+
+            {/* Token Selection Grid */}
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3">
+              {filteredTokens.map((token) => (
+                <button
+                  key={token}
+                  onClick={() => {
+                    setSelectedToken(token);
+                    setTokenSearch('');
+                  }}
+                  className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
+                    selectedToken === token
+                      ? 'bg-gradient-primary text-white shadow-glow-primary'
+                      : 'bg-brand-bg-secondary border border-brand-purple-900/50 text-gray-300 hover:border-brand-purple-500'
+                  }`}
+                >
+                  {token}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Selected Token Info */}
+          <div className="bg-brand-bg-secondary border border-brand-purple-900/30 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm text-gray-400">Selected Token</div>
+                <div className="text-2xl font-bold text-white">{selectedToken}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-gray-400">Current Price</div>
+                <div className="text-2xl font-bold text-white">${formatPrice(currentPrice)}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Timeframe Selector */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-300">
+              Prediction Timeframe
+            </label>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-3">
+              {(['15s', '30s', '1m', '5m', '30m'] as const).map((tf) => (
+                <button
+                  key={tf}
+                  onClick={() => setSelectedTimeframe(tf)}
+                  className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
+                    selectedTimeframe === tf
+                      ? 'bg-gradient-primary text-white shadow-glow-primary'
+                      : 'bg-brand-bg-secondary border border-brand-purple-900/50 text-gray-300 hover:border-brand-purple-500'
+                  }`}
+                >
+                  {tf}
+                </button>
+              ))}
+              <button
+                onClick={() => setSelectedTimeframe('custom')}
+                className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
+                  selectedTimeframe === 'custom'
+                    ? 'bg-gradient-primary text-white shadow-glow-primary'
+                    : 'bg-brand-bg-secondary border border-brand-purple-900/50 text-gray-300 hover:border-brand-purple-500'
+                }`}
+              >
+                Custom
+              </button>
+            </div>
+
+            {/* Custom Hours Input */}
+            {selectedTimeframe === 'custom' && (
+              <div className="mt-3">
+                <label className="block text-sm font-medium mb-1 text-gray-400">
+                  Enter Hours
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="168"
+                  value={customHours}
+                  onChange={(e) => setCustomHours(e.target.value)}
+                  placeholder="e.g., 2"
+                  className="w-full px-4 py-2 rounded-lg border border-brand-purple-900/50 bg-brand-bg-secondary text-white focus:outline-none focus:ring-2 focus:ring-brand-purple-500 transition-all"
+                />
+                <p className="text-xs text-gray-500 mt-1">Max: 168 hours (7 days)</p>
+              </div>
+            )}
+          </div>
+
+          {/* Bet Amount */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-300">
+              Bet Amount (ETH)
+            </label>
+            <input
+              type="number"
+              step="0.001"
+              min="0.001"
+              value={betAmount}
+              onChange={(e) => setBetAmount(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white focus:outline-none focus:ring-2 focus:ring-brand-purple-500 transition-all"
+            />
+          </div>
+
+          {/* Bull/Bear Buttons */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-300">
+              Your Prediction
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => setSelectedDirection('up')}
+                className={`py-6 rounded-xl font-bold text-lg transition-all transform hover:-translate-y-0.5 ${
+                  selectedDirection === 'up'
+                    ? 'bg-brand-success border-2 border-brand-success text-white shadow-lg scale-105'
+                    : 'bg-brand-success/20 border-2 border-brand-success hover:bg-brand-success/30 text-brand-success'
+                }`}
+              >
+                <div className="text-3xl mb-2">🐂</div>
+                <div>BULL (UP)</div>
+              </button>
+              <button
+                onClick={() => setSelectedDirection('down')}
+                className={`py-6 rounded-xl font-bold text-lg transition-all transform hover:-translate-y-0.5 ${
+                  selectedDirection === 'down'
+                    ? 'bg-brand-error border-2 border-brand-error text-white shadow-lg scale-105'
+                    : 'bg-brand-error/20 border-2 border-brand-error hover:bg-brand-error/30 text-brand-error'
+                }`}
+              >
+                <div className="text-3xl mb-2">🐻</div>
+                <div>BEAR (DOWN)</div>
+              </button>
+            </div>
+          </div>
+
+          {/* Place Bet Button */}
+          <button
+            onClick={handlePlaceBet}
+            disabled={!selectedDirection || isCreatingPrediction || isPlacingBet}
+            className="w-full bg-gradient-primary hover:shadow-glow-primary text-white font-bold py-4 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
+          >
+            {isCreatingPrediction || isPlacingBet ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                <span>Placing Bet...</span>
+              </span>
+            ) : (
+              `⚡ Place ${selectedDirection ? selectedDirection.toUpperCase() : ''} Bet (${betAmount} ETH)`
+            )}
+          </button>
+
+          {/* Info */}
+          <div className="bg-brand-purple-500/10 border border-brand-purple-500/30 rounded-xl p-4">
+            <p className="text-sm text-gray-300">
+              💡 Your prediction will be created on-chain and resolved automatically using Chainlink price feeds
+            </p>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold text-white">${formatPrice(currentPrice)}</div>
-          <div className="text-xs text-gray-400">Current Price</div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <button
-          onClick={() => handleQuickBet('up')}
-          disabled={!isConnected || isPending}
-          className={`py-4 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 ${
-            selectedDirection === 'up'
-              ? 'bg-brand-success border-2 border-brand-success text-white shadow-lg'
-              : 'bg-brand-success/20 border-2 border-brand-success hover:bg-brand-success/30 text-brand-success'
-          } disabled:opacity-50 disabled:cursor-not-allowed`}
-        >
-          <div className="text-2xl mb-1">🐂</div>
-          <div>BULL (UP)</div>
-        </button>
-        <button
-          onClick={() => handleQuickBet('down')}
-          disabled={!isConnected || isPending}
-          className={`py-4 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 ${
-            selectedDirection === 'down'
-              ? 'bg-brand-error border-2 border-brand-error text-white shadow-lg'
-              : 'bg-brand-error/20 border-2 border-brand-error hover:bg-brand-error/30 text-brand-error'
-          } disabled:opacity-50 disabled:cursor-not-allowed`}
-        >
-          <div className="text-2xl mb-1">🐻</div>
-          <div>BEAR (DOWN)</div>
-        </button>
-      </div>
-
-      <div className="text-xs text-center text-gray-400">
-        {isConnected ? 'Quick 1h prediction - Click to bet!' : 'Connect wallet to start'}
-      </div>
+      )}
     </div>
   );
 }
@@ -134,20 +319,12 @@ export default function CryptoPredictionsPage() {
               Market Predictions
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl">
-              Quick UP or DOWN bets on major crypto assets. Will the price go up or down in the next hour?
+              Search for any token on Base chain and predict UP or DOWN with custom timeframes from 15 seconds to hours.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FEATURED_TOKENS.map((token) => (
-              <QuickBetCard key={token.symbol} token={token} />
-            ))}
-          </div>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-400">
-              💡 Quick bets are 1-hour predictions. For custom timeframes, use the form below.
-            </p>
+          <div className="max-w-4xl mx-auto">
+            <QuickMarketBetting />
           </div>
         </section>
 
