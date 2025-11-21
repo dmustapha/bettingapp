@@ -10,7 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-raleway)', 'system-ui', 'sans-serif'],
       },
       colors: {
         // CryptoWager Color Scheme from Figma
@@ -106,6 +106,15 @@ const config: Config = {
       borderRadius: {
         'xl': '1rem',
         '2xl': '1.5rem',
+      },
+      keyframes: {
+        flip: {
+          '0%, 100%': { transform: 'rotateY(0deg)' },
+          '50%': { transform: 'rotateY(180deg)' },
+        },
+      },
+      animation: {
+        flip: 'flip 4s ease-in-out infinite',
       },
     },
   },

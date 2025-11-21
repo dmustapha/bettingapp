@@ -1,8 +1,9 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseEther } from 'viem';
 
-// TODO: Update these when contract is deployed
-const P2P_WAGERS_ADDRESS = '0x0000000000000000000000000000000000000000' as `0x${string}`;
+// Deployed on Base Sepolia
+const P2P_WAGERS_ADDRESS = (process.env.NEXT_PUBLIC_P2P_WAGERS_CONTRACT_ADDRESS ||
+  '0x996103977d86FC8Ec34DeC34429E0158AAB293E2') as `0x${string}`;
 
 const P2P_WAGERS_ABI = [
   {

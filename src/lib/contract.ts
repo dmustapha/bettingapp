@@ -160,9 +160,9 @@ export const BETTING_MARKET_ABI = [
   },
 ] as const;
 
-// Contract address - will be set after deployment
+// Contract address - Deployed on Base Sepolia
 export const BETTING_MARKET_ADDRESS = (process.env.NEXT_PUBLIC_BETTING_CONTRACT_ADDRESS ||
-  '0x0000000000000000000000000000000000000000') as Address;
+  '0x6593e48F29E3eC721869D7a98d63D0aD83EFA7b3') as Address;
 
 // Check if contract is deployed
 export const isContractDeployed = () => {

@@ -2,8 +2,9 @@ import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 
 import { parseEther } from 'viem';
 import TOKENS, { getFeaturedTokens, getAllTokenSymbols } from '@/config/tokens.config';
 
-// TODO: Update these when contract is deployed
-const CRYPTO_MARKET_BETS_ADDRESS = '0x0000000000000000000000000000000000000000' as `0x${string}`;
+// Deployed on Base Sepolia
+const CRYPTO_MARKET_BETS_ADDRESS = (process.env.NEXT_PUBLIC_CRYPTO_MARKET_BETS_CONTRACT_ADDRESS ||
+  '0x6BA9aA2B3582faB1CeB7923c5D20A0531F722161') as `0x${string}`;
 
 const CRYPTO_MARKET_BETS_ABI = [
   {

@@ -60,25 +60,31 @@ export default function CreateWagerPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-dark text-white">
       <MainNav />
 
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="mb-6">
-            <Link href="/wagers" className="text-blue-600 hover:text-blue-700 dark:text-blue-400">
-              ← Back to Wagers
+            <Link href="/wagers" className="text-brand-purple-400 hover:text-brand-purple-300 transition-colors flex items-center gap-2">
+              <span>←</span>
+              <span>Back to Wagers</span>
             </Link>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">
-              Create P2P Wager
-            </h1>
+          <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-xl p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center text-2xl shadow-lg">
+                🤝
+              </div>
+              <h1 className="text-3xl font-bold">
+                Create P2P Wager
+              </h1>
+            </div>
 
             {!isConnected ? (
               <div className="text-center py-8">
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-gray-400 mb-4">
                   Please connect your wallet to create a wager
                 </p>
                 <ConnectButton />
@@ -86,7 +92,7 @@ export default function CreateWagerPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
                     Wager Claim *
                   </label>
                   <textarea
@@ -94,16 +100,16 @@ export default function CreateWagerPage() {
                     onChange={(e) => setClaim(e.target.value)}
                     placeholder="e.g., Team A will beat Team B in tomorrow's match"
                     rows={3}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
                     required
                   />
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-gray-400 mt-1">
                     Describe what you're betting on. Be specific and clear.
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
                     Resolver Address *
                   </label>
                   <input
@@ -111,16 +117,16 @@ export default function CreateWagerPage() {
                     value={resolver}
                     onChange={(e) => setResolver(e.target.value)}
                     placeholder="0x..."
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all font-mono"
                     required
                   />
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-gray-400 mt-1">
                     Address of the trusted third party who will resolve this wager
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
                     Stake Amount (ETH) *
                   </label>
                   <input
@@ -129,17 +135,17 @@ export default function CreateWagerPage() {
                     min="0.001"
                     value={stakeAmount}
                     onChange={(e) => setStakeAmount(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
                     required
                   />
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-gray-400 mt-1">
                     The amount you're betting. Your opponent must match this amount.
                   </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-semibold mb-2 text-gray-300">
                       Expiry Date *
                     </label>
                     <input
@@ -147,33 +153,34 @@ export default function CreateWagerPage() {
                       value={expiryDate}
                       onChange={(e) => setExpiryDate(e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-semibold mb-2 text-gray-300">
                       Expiry Time *
                     </label>
                     <input
                       type="time"
                       value={expiryTime}
                       onChange={(e) => setExpiryTime(e.target.value)}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
                       required
                     />
                   </div>
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 -mt-4">
+                <p className="text-sm text-gray-400 -mt-4">
                   When this wager expires if no one accepts it
                 </p>
 
-                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-                  <h3 className="font-semibold text-green-900 dark:text-green-200 mb-2">
-                    How it works:
+                <div className="bg-brand-purple-500/10 border border-brand-purple-500/30 rounded-xl p-4">
+                  <h3 className="font-semibold text-brand-purple-300 mb-2 flex items-center gap-2">
+                    <span>💡</span>
+                    <span>How it works:</span>
                   </h3>
-                  <ul className="text-sm text-green-800 dark:text-green-300 space-y-1">
+                  <ul className="text-sm text-gray-300 space-y-1">
                     <li>• Your opponent must match your stake to accept</li>
                     <li>• The resolver decides who wins after the event</li>
                     <li>• Winner takes the full pool (minus 2% platform fee)</li>
@@ -182,17 +189,19 @@ export default function CreateWagerPage() {
                 </div>
 
                 {error && (
-                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                    <p className="text-red-800 dark:text-red-200 text-sm">
-                      Error: {error.message}
+                  <div className="bg-brand-error/10 border border-brand-error/30 rounded-xl p-4">
+                    <p className="text-brand-error text-sm flex items-center gap-2">
+                      <span>❌</span>
+                      <span>Error: {error.message}</span>
                     </p>
                   </div>
                 )}
 
                 {isSuccess && (
-                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                    <p className="text-green-800 dark:text-green-200 text-sm">
-                      Wager created successfully! Redirecting to wagers...
+                  <div className="bg-brand-success/10 border border-brand-success/30 rounded-xl p-4">
+                    <p className="text-brand-success text-sm flex items-center gap-2">
+                      <span>✅</span>
+                      <span>Wager created successfully! Redirecting to wagers...</span>
                     </p>
                   </div>
                 )}
@@ -200,9 +209,19 @@ export default function CreateWagerPage() {
                 <button
                   type="submit"
                   disabled={isPending || isConfirming}
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-primary hover:shadow-glow-primary text-white font-bold py-4 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
                 >
-                  {isPending || isConfirming ? 'Creating Wager...' : `Create Wager (${stakeAmount} ETH)`}
+                  {isPending || isConfirming ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <span>Creating Wager...</span>
+                    </span>
+                  ) : (
+                    `🎲 Create Wager (${stakeAmount} ETH)`
+                  )}
                 </button>
               </form>
             )}

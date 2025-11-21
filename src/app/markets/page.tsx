@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { BitcoinLogo, EthereumLogo, SolanaLogo } from '@/components/crypto/CryptoIcons';
 import { ChartPreview, MiniChart } from '@/components/crypto/ChartPreview';
+import { AnimatedBitcoinIcon } from '@/components/crypto/AnimatedBitcoinIcon';
+import { CryptoWagerLogo } from '@/components/Logo';
 
 export default function LandingPage() {
   return (
@@ -13,10 +15,8 @@ export default function LandingPage() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             {/* Logo */}
-            <Link href="/markets" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-purple flex items-center justify-center font-bold text-xl">
-                B
-              </div>
+            <Link href="/markets" className="flex items-center gap-3 group">
+              <CryptoWagerLogo className="w-10 h-10 transition-transform group-hover:scale-110" />
               <span className="text-2xl font-bold">CryptoWager</span>
             </Link>
 
@@ -57,9 +57,9 @@ export default function LandingPage() {
                 <span className="text-sm">🔥 Decentralized Betting Platform</span>
               </div>
 
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+              <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-[1.15]">
                 Bet Smart,
-                <span className="block bg-gradient-purple bg-clip-text text-transparent">
+                <span className="block bg-gradient-purple bg-clip-text text-transparent pb-2">
                   Win Big
                 </span>
               </h1>
@@ -124,7 +124,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Live Wagers Card */}
-                <div className="bg-brand-bg-card/90 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-5 hover:border-brand-purple-500 transition-all ml-8 shadow-xl">
+                <div className="bg-brand-bg-card/90 backdrop-blur-sm border border-brand-purple-900/50 rounded-2xl p-5 hover:border-brand-purple-500 transition-all shadow-xl">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
@@ -139,13 +139,9 @@ export default function LandingPage() {
                   <div className="text-xs text-gray-400">Active Bets</div>
                 </div>
 
-                {/* Gold Coin Visual */}
-                <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur-sm border border-yellow-600/30 rounded-2xl p-6 hover:border-yellow-500/50 transition-all mr-8 shadow-xl">
-                  <div className="flex items-center justify-center">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
-                      <BitcoinLogo className="w-12 h-12" />
-                    </div>
-                  </div>
+                {/* Animated Bitcoin Icon */}
+                <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur-sm border border-yellow-600/30 rounded-2xl p-6 hover:border-yellow-500/50 transition-all shadow-xl">
+                  <AnimatedBitcoinIcon />
                 </div>
               </div>
             </div>
