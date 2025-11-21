@@ -125,8 +125,11 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
   const { isConnected } = useAccount();
   const [betAmount, setBetAmount] = useState('0.01');
   const [selectedDirection, setSelectedDirection] = useState<'up' | 'down' | null>(null);
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'15m' | '30m' | '1h' | '4h' | '1d'>('1h');
+  const [showBetConfig, setShowBetConfig] = useState(false);
   const { data: currentPrice } = useCurrentPrice(token.symbol);
-  const { placePredictionBet, isPending, isSuccess } = usePlacePredictionBet();
+  const { createPrediction, isPending: isCreatingPrediction } = useCreatePrediction();
+  const { placePredictionBet, isPending: isPlacingBet, isSuccess } = usePlacePredictionBet();
 
   const formatPrice = (price: bigint | undefined) => {
     if (!price) return '---';
@@ -134,28 +137,64 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
     return priceNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
-  const handleQuickBet = (direction: 'up' | 'down') => {
+  const getTimeframeSeconds = () => {
+    switch (selectedTimeframe) {
+      case '15m': return 900;
+      case '30m': return 1800;
+      case '1h': return 3600;
+      case '4h': return 14400;
+      case '1d': return 86400;
+      default: return 3600;
+    }
+  };
+
+  const handleDirectionSelect = (direction: 'up' | 'down') => {
     if (!isConnected) {
       alert('Please connect your wallet first');
       return;
     }
     setSelectedDirection(direction);
-    // TODO: This would create a quick 1h prediction and place bet in one transaction
-    // For now, just show selection
+    setShowBetConfig(true);
+  };
+
+  const handlePlaceBet = async () => {
+    if (!selectedDirection || !isConnected) return;
+
+    try {
+      // Create prediction and place bet
+      const predictionOutcome = selectedDirection === 'up';
+      const description = `${token.symbol} will go ${selectedDirection.toUpperCase()} in ${selectedTimeframe}`;
+
+      // This would need to be integrated with your contract logic
+      alert(`Placing ${selectedDirection.toUpperCase()} bet on ${token.symbol} for ${betAmount} ETH (${selectedTimeframe})`);
+
+      // Reset after successful bet
+      setShowBetConfig(false);
+      setSelectedDirection(null);
+    } catch (error) {
+      console.error('Error placing bet:', error);
+    }
+  };
+
+  const handleCancel = () => {
+    setShowBetConfig(false);
+    setSelectedDirection(null);
   };
 
   return (
     <div className="relative group bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-lg p-6 hover:shadow-glow-purple hover:border-brand-purple-500 transition-all">
       {/* View Details Button */}
-      <button
-        onClick={onViewDetails}
-        className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-lg bg-brand-purple-500/20 hover:bg-brand-purple-500/30 text-gray-300 hover:text-white"
-        title="View chart & details"
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-        </svg>
-      </button>
+      {!showBetConfig && (
+        <button
+          onClick={onViewDetails}
+          className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-lg bg-brand-purple-500/20 hover:bg-brand-purple-500/30 text-gray-300 hover:text-white z-10"
+          title="View chart & details"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        </button>
+      )}
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -175,8 +214,8 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
 
       <div className="grid grid-cols-2 gap-3 mb-4">
         <button
-          onClick={() => handleQuickBet('up')}
-          disabled={!isConnected || isPending}
+          onClick={() => handleDirectionSelect('up')}
+          disabled={!isConnected || showBetConfig}
           className={`py-4 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 ${
             selectedDirection === 'up'
               ? 'bg-brand-success border-2 border-brand-success text-white shadow-lg'
@@ -187,8 +226,8 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
           <div>BULL (UP)</div>
         </button>
         <button
-          onClick={() => handleQuickBet('down')}
-          disabled={!isConnected || isPending}
+          onClick={() => handleDirectionSelect('down')}
+          disabled={!isConnected || showBetConfig}
           className={`py-4 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 ${
             selectedDirection === 'down'
               ? 'bg-brand-error border-2 border-brand-error text-white shadow-lg'
@@ -200,9 +239,75 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
         </button>
       </div>
 
-      <div className="text-xs text-center text-gray-400">
-        {isConnected ? 'Quick 1h prediction - Click to bet!' : 'Connect wallet to start'}
-      </div>
+      {/* Expandable Bet Configuration */}
+      {showBetConfig && (
+        <div className="border-t border-brand-purple-900/30 pt-4 space-y-4 animate-in slide-in-from-top-2 duration-300">
+          {/* Timeframe Selector */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-300">
+              Timeframe
+            </label>
+            <div className="grid grid-cols-5 gap-2">
+              {(['15m', '30m', '1h', '4h', '1d'] as const).map((timeframe) => (
+                <button
+                  key={timeframe}
+                  onClick={() => setSelectedTimeframe(timeframe)}
+                  className={`py-2 px-3 rounded-lg text-sm font-semibold transition-all ${
+                    selectedTimeframe === timeframe
+                      ? 'bg-brand-purple-600 text-white'
+                      : 'bg-brand-bg-secondary text-gray-300 hover:bg-brand-purple-900/30'
+                  }`}
+                >
+                  {timeframe}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Bet Amount */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-300">
+              Bet Amount (ETH)
+            </label>
+            <input
+              type="number"
+              value={betAmount}
+              onChange={(e) => setBetAmount(e.target.value)}
+              step="0.01"
+              min="0.01"
+              className="w-full px-4 py-2 rounded-lg border border-brand-purple-900/50 bg-brand-bg-secondary text-white focus:outline-none focus:ring-2 focus:ring-brand-purple-500"
+              placeholder="0.01"
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={handleCancel}
+              className="py-3 rounded-lg font-semibold bg-gray-600 hover:bg-gray-700 text-white transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handlePlaceBet}
+              disabled={isCreatingPrediction || isPlacingBet}
+              className={`py-3 rounded-lg font-semibold transition-all ${
+                selectedDirection === 'up'
+                  ? 'bg-brand-success hover:bg-brand-success/90 text-white'
+                  : 'bg-brand-error hover:bg-brand-error/90 text-white'
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              {isCreatingPrediction || isPlacingBet ? 'Processing...' : 'Place Bet'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!showBetConfig && (
+        <div className="text-xs text-center text-gray-400">
+          {isConnected ? 'Click Bull or Bear to start!' : 'Connect wallet to start'}
+        </div>
+      )}
     </div>
   );
 }
