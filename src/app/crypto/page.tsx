@@ -19,17 +19,17 @@ import { BASE_SEPOLIA_TOKENS, TokenInfo } from '@/config/tokens.base';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { TokenChart } from '@/components/crypto/TokenChart';
 
-// Token Card with Live Price
-function TokenCard({
+// Token Details Modal
+function TokenDetailsModal({
   symbol,
-  isSelected,
-  onClick,
-  onDetailsClick
+  name,
+  icon,
+  onClose
 }: {
   symbol: string;
-  isSelected: boolean;
-  onClick: () => void;
-  onDetailsClick: (e: React.MouseEvent) => void;
+  name: string;
+  icon: string;
+  onClose: () => void;
 }) {
   const { data: price } = useCurrentPrice(symbol);
 
@@ -39,75 +39,29 @@ function TokenCard({
     return priceNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
+  const tokenDescriptions: Record<string, string> = {
+    ETH: 'The world\'s programmable blockchain',
+    BTC: 'The first and most valuable cryptocurrency',
+    SOL: 'High-performance blockchain for decentralized apps',
+  };
+
   return (
     <div
-      className={`relative group cursor-pointer transition-all ${
-        isSelected
-          ? 'bg-gradient-primary text-white shadow-glow-primary'
-          : 'bg-brand-bg-secondary border border-brand-purple-900/50 text-gray-300 hover:border-brand-purple-500'
-      } rounded-lg p-3`}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      onClick={onClose}
     >
-      <div onClick={onClick} className="space-y-1">
-        <div className="font-semibold text-sm">{symbol}</div>
-        <div className={`text-xs ${isSelected ? 'text-white/80' : 'text-gray-400'}`}>
-          ${formatPrice(price)}
-        </div>
-      </div>
-      <button
-        onClick={onDetailsClick}
-        className={`absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded ${
-          isSelected ? 'text-white hover:bg-white/20' : 'text-gray-400 hover:bg-brand-purple-500/20'
-        }`}
-        title="View chart & details"
+      <div
+        className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-        </svg>
-      </button>
-    </div>
-  );
-}
-
-// Token Details Modal
-function TokenDetailsModal({
-  symbol,
-  onClose
-}: {
-  symbol: string | null;
-  onClose: () => void;
-}) {
-  const { data: price } = useCurrentPrice(symbol || 'ETH');
-
-  const formatPrice = (price: bigint | undefined) => {
-    if (!price) return '---';
-    const priceNum = Number(price) / 1e8;
-    return priceNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  };
-
-  if (!symbol) return null;
-
-  const tokenInfo: Record<string, { name: string; description: string; icon: string }> = {
-    ETH: { name: 'Ethereum', description: 'The world\'s programmable blockchain', icon: '⟠' },
-    BTC: { name: 'Bitcoin', description: 'The first and most valuable cryptocurrency', icon: '₿' },
-    SOL: { name: 'Solana', description: 'High-performance blockchain for decentralized apps', icon: '◎' },
-    USDC: { name: 'USD Coin', description: 'Stablecoin pegged to the US Dollar', icon: '💵' },
-    USDT: { name: 'Tether', description: 'Most widely used stablecoin', icon: '₮' },
-    WETH: { name: 'Wrapped ETH', description: 'ERC-20 compatible version of ETH', icon: '⟠' },
-  };
-
-  const info = tokenInfo[symbol] || { name: symbol, description: 'Token information', icon: '🪙' };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-brand-bg-card border-b border-brand-purple-900/30 p-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-3xl">
-              {info.icon}
+              {icon}
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">{info.name}</h2>
+              <h2 className="text-2xl font-bold text-white">{name}</h2>
               <p className="text-gray-400 text-sm">{symbol}</p>
             </div>
           </div>
@@ -127,7 +81,7 @@ function TokenDetailsModal({
           <div className="bg-brand-bg-secondary rounded-xl p-6 border border-brand-purple-900/30">
             <div className="text-sm text-gray-400 mb-1">Current Price</div>
             <div className="text-4xl font-bold text-white">${formatPrice(price)}</div>
-            <div className="text-sm text-gray-400 mt-2">{info.description}</div>
+            <div className="text-sm text-gray-400 mt-2">{tokenDescriptions[symbol] || 'Digital asset'}</div>
           </div>
 
           {/* Chart */}
@@ -166,8 +120,95 @@ function TokenDetailsModal({
   );
 }
 
-// Enhanced Quick Market Betting Component
-function QuickMarketBetting() {
+// Quick Market Betting Card Component
+function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[0]; onViewDetails: () => void }) {
+  const { isConnected } = useAccount();
+  const [betAmount, setBetAmount] = useState('0.01');
+  const [selectedDirection, setSelectedDirection] = useState<'up' | 'down' | null>(null);
+  const { data: currentPrice } = useCurrentPrice(token.symbol);
+  const { placePredictionBet, isPending, isSuccess } = usePlacePredictionBet();
+
+  const formatPrice = (price: bigint | undefined) => {
+    if (!price) return '---';
+    const priceNum = Number(price) / 1e8;
+    return priceNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  const handleQuickBet = (direction: 'up' | 'down') => {
+    if (!isConnected) {
+      alert('Please connect your wallet first');
+      return;
+    }
+    setSelectedDirection(direction);
+    // TODO: This would create a quick 1h prediction and place bet in one transaction
+    // For now, just show selection
+  };
+
+  return (
+    <div className="relative group bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-lg p-6 hover:shadow-glow-purple hover:border-brand-purple-500 transition-all">
+      {/* View Details Button */}
+      <button
+        onClick={onViewDetails}
+        className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-lg bg-brand-purple-500/20 hover:bg-brand-purple-500/30 text-gray-300 hover:text-white"
+        title="View chart & details"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      </button>
+
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-2xl shadow-lg">
+            {token.icon}
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-white">{token.symbol}</h3>
+            <p className="text-sm text-gray-400">{token.name}</p>
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-2xl font-bold text-white">${formatPrice(currentPrice)}</div>
+          <div className="text-xs text-gray-400">Current Price</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <button
+          onClick={() => handleQuickBet('up')}
+          disabled={!isConnected || isPending}
+          className={`py-4 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 ${
+            selectedDirection === 'up'
+              ? 'bg-brand-success border-2 border-brand-success text-white shadow-lg'
+              : 'bg-brand-success/20 border-2 border-brand-success hover:bg-brand-success/30 text-brand-success'
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
+        >
+          <div className="text-2xl mb-1">🐂</div>
+          <div>BULL (UP)</div>
+        </button>
+        <button
+          onClick={() => handleQuickBet('down')}
+          disabled={!isConnected || isPending}
+          className={`py-4 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 ${
+            selectedDirection === 'down'
+              ? 'bg-brand-error border-2 border-brand-error text-white shadow-lg'
+              : 'bg-brand-error/20 border-2 border-brand-error hover:bg-brand-error/30 text-brand-error'
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
+        >
+          <div className="text-2xl mb-1">🐻</div>
+          <div>BEAR (DOWN)</div>
+        </button>
+      </div>
+
+      <div className="text-xs text-center text-gray-400">
+        {isConnected ? 'Quick 1h prediction - Click to bet!' : 'Connect wallet to start'}
+      </div>
+    </div>
+  );
+}
+
+// Custom Token Search Subsection
+function CustomTokenSearch() {
   const { isConnected } = useAccount();
   const { createPrediction, isPending: isCreatingPrediction } = useCreatePrediction();
   const { placePredictionBet, isPending: isPlacingBet } = usePlacePredictionBet();
@@ -176,7 +217,6 @@ function QuickMarketBetting() {
   const [tokenSearch, setTokenSearch] = useState('');
   const [selectedToken, setSelectedToken] = useState<string>('ETH');
   const { data: currentPrice } = useCurrentPrice(selectedToken);
-  const [showTokenDetails, setShowTokenDetails] = useState<string | null>(null);
 
   // Timeframe state
   const [selectedTimeframe, setSelectedTimeframe] = useState<'15s' | '30s' | '1m' | '5m' | '30m' | 'custom'>('1m');
@@ -222,13 +262,8 @@ function QuickMarketBetting() {
     }
 
     try {
-      // Create prediction with selected timeframe
       const timeframeSeconds = getTimeframeSeconds();
       await createPrediction(selectedToken, timeframeSeconds);
-
-      // In a real implementation, you'd wait for the prediction to be created
-      // then place the bet on that prediction ID
-      // For now, this is a placeholder
       alert(`Prediction created! Direction: ${selectedDirection.toUpperCase()}, Timeframe: ${selectedTimeframe === 'custom' ? customHours + 'h' : selectedTimeframe}`);
     } catch (error) {
       console.error('Error placing bet:', error);
@@ -237,22 +272,20 @@ function QuickMarketBetting() {
   };
 
   return (
-    <>
-      {/* Token Details Modal */}
-      {showTokenDetails && (
-        <TokenDetailsModal
-          symbol={showTokenDetails}
-          onClose={() => setShowTokenDetails(null)}
-        />
-      )}
-
-      <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-xl p-8">
-        <div className="mb-6">
-          <h3 className="text-2xl font-bold text-white mb-2">Quick Market Prediction</h3>
-          <p className="text-sm text-gray-400">
-            Search for any token, select timeframe, and predict UP or DOWN. Click the chart icon to view details.
-          </p>
+    <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-xl p-8">
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center text-xl">
+            🔍
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-white">Custom Token Search</h3>
+            <p className="text-sm text-gray-400">
+              Search for any token and create custom predictions with flexible timeframes
+            </p>
+          </div>
         </div>
+      </div>
 
       {!isConnected ? (
         <div className="text-center py-8">
@@ -274,22 +307,23 @@ function QuickMarketBetting() {
               className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 transition-all"
             />
 
-            {/* Token Selection Grid with Live Prices */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mt-3">
+            {/* Token Selection Grid */}
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3">
               {filteredTokens.map((token) => (
-                <TokenCard
+                <button
                   key={token}
-                  symbol={token}
-                  isSelected={selectedToken === token}
                   onClick={() => {
                     setSelectedToken(token);
                     setTokenSearch('');
                   }}
-                  onDetailsClick={(e) => {
-                    e.stopPropagation();
-                    setShowTokenDetails(token);
-                  }}
-                />
+                  className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
+                    selectedToken === token
+                      ? 'bg-gradient-primary text-white shadow-glow-primary'
+                      : 'bg-brand-bg-secondary border border-brand-purple-900/50 text-gray-300 hover:border-brand-purple-500'
+                  }`}
+                >
+                  {token}
+                </button>
               ))}
             </div>
           </div>
@@ -432,8 +466,7 @@ function QuickMarketBetting() {
           </div>
         </div>
       )}
-      </div>
-    </>
+    </div>
   );
 }
 
@@ -447,6 +480,7 @@ export default function CryptoPredictionsPage() {
   const [customDescription, setCustomDescription] = useState('');
   const [selectedTimeframe, setSelectedTimeframe] = useState<keyof typeof TIMEFRAMES>('1h');
   const [betAmount, setBetAmount] = useState('0.01');
+  const [showTokenDetails, setShowTokenDetails] = useState<{symbol: string; name: string; icon: string} | null>(null);
 
   const handleCreateCustomPrediction = (e: React.FormEvent) => {
     e.preventDefault();
@@ -456,8 +490,6 @@ export default function CryptoPredictionsPage() {
       return;
     }
 
-    // For now, we'll use the token from the selector
-    // In future, this could be expanded to support custom assets
     const timeframeSeconds = TIMEFRAMES[selectedTimeframe];
     createPrediction(selectedToken.symbol, timeframeSeconds);
   };
@@ -465,6 +497,16 @@ export default function CryptoPredictionsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-dark text-white">
       <MainNav />
+
+      {/* Token Details Modal */}
+      {showTokenDetails && (
+        <TokenDetailsModal
+          symbol={showTokenDetails.symbol}
+          name={showTokenDetails.name}
+          icon={showTokenDetails.icon}
+          onClose={() => setShowTokenDetails(null)}
+        />
+      )}
 
       <main className="flex-1 container mx-auto px-4 py-8 pt-24">
         {/* SECTION 1: QUICK MARKET BETTING */}
@@ -477,12 +519,23 @@ export default function CryptoPredictionsPage() {
               Market Predictions
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl">
-              Search for any token on Base chain and predict UP or DOWN with custom timeframes from 15 seconds to hours.
+              Quick UP or DOWN bets on major crypto assets with live prices. Hover over cards to view detailed charts.
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
-            <QuickMarketBetting />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {FEATURED_TOKENS.map((token) => (
+              <QuickBetCard
+                key={token.symbol}
+                token={token}
+                onViewDetails={() => setShowTokenDetails({ symbol: token.symbol, name: token.name, icon: token.icon })}
+              />
+            ))}
+          </div>
+
+          {/* Custom Token Search Subsection */}
+          <div className="mt-12">
+            <CustomTokenSearch />
           </div>
         </section>
 
