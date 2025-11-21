@@ -17,6 +17,154 @@ import { Footer } from '@/components';
 import { TokenToggle } from '@/components/TokenSelector';
 import { BASE_SEPOLIA_TOKENS, TokenInfo } from '@/config/tokens.base';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { TokenChart } from '@/components/crypto/TokenChart';
+
+// Token Card with Live Price
+function TokenCard({
+  symbol,
+  isSelected,
+  onClick,
+  onDetailsClick
+}: {
+  symbol: string;
+  isSelected: boolean;
+  onClick: () => void;
+  onDetailsClick: (e: React.MouseEvent) => void;
+}) {
+  const { data: price } = useCurrentPrice(symbol);
+
+  const formatPrice = (price: bigint | undefined) => {
+    if (!price) return '---';
+    const priceNum = Number(price) / 1e8;
+    return priceNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  return (
+    <div
+      className={`relative group cursor-pointer transition-all ${
+        isSelected
+          ? 'bg-gradient-primary text-white shadow-glow-primary'
+          : 'bg-brand-bg-secondary border border-brand-purple-900/50 text-gray-300 hover:border-brand-purple-500'
+      } rounded-lg p-3`}
+    >
+      <div onClick={onClick} className="space-y-1">
+        <div className="font-semibold text-sm">{symbol}</div>
+        <div className={`text-xs ${isSelected ? 'text-white/80' : 'text-gray-400'}`}>
+          ${formatPrice(price)}
+        </div>
+      </div>
+      <button
+        onClick={onDetailsClick}
+        className={`absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded ${
+          isSelected ? 'text-white hover:bg-white/20' : 'text-gray-400 hover:bg-brand-purple-500/20'
+        }`}
+        title="View chart & details"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+// Token Details Modal
+function TokenDetailsModal({
+  symbol,
+  onClose
+}: {
+  symbol: string | null;
+  onClose: () => void;
+}) {
+  const { data: price } = useCurrentPrice(symbol || 'ETH');
+
+  const formatPrice = (price: bigint | undefined) => {
+    if (!price) return '---';
+    const priceNum = Number(price) / 1e8;
+    return priceNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  if (!symbol) return null;
+
+  const tokenInfo: Record<string, { name: string; description: string; icon: string }> = {
+    ETH: { name: 'Ethereum', description: 'The world\'s programmable blockchain', icon: '⟠' },
+    BTC: { name: 'Bitcoin', description: 'The first and most valuable cryptocurrency', icon: '₿' },
+    SOL: { name: 'Solana', description: 'High-performance blockchain for decentralized apps', icon: '◎' },
+    USDC: { name: 'USD Coin', description: 'Stablecoin pegged to the US Dollar', icon: '💵' },
+    USDT: { name: 'Tether', description: 'Most widely used stablecoin', icon: '₮' },
+    WETH: { name: 'Wrapped ETH', description: 'ERC-20 compatible version of ETH', icon: '⟠' },
+  };
+
+  const info = tokenInfo[symbol] || { name: symbol, description: 'Token information', icon: '🪙' };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="sticky top-0 bg-brand-bg-card border-b border-brand-purple-900/30 p-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-3xl">
+              {info.icon}
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white">{info.name}</h2>
+              <p className="text-gray-400 text-sm">{symbol}</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg hover:bg-brand-purple-500/20 text-gray-400 hover:text-white transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* Price Info */}
+          <div className="bg-brand-bg-secondary rounded-xl p-6 border border-brand-purple-900/30">
+            <div className="text-sm text-gray-400 mb-1">Current Price</div>
+            <div className="text-4xl font-bold text-white">${formatPrice(price)}</div>
+            <div className="text-sm text-gray-400 mt-2">{info.description}</div>
+          </div>
+
+          {/* Chart */}
+          <div className="bg-brand-bg-secondary rounded-xl p-6 border border-brand-purple-900/30">
+            <h3 className="text-lg font-semibold text-white mb-4">Price Chart</h3>
+            <TokenChart
+              symbol={symbol}
+              height={400}
+              showTimeframeSelector={true}
+              chartType="area"
+            />
+          </div>
+
+          {/* Token Details */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="bg-brand-bg-secondary rounded-xl p-4 border border-brand-purple-900/30">
+              <div className="text-sm text-gray-400 mb-1">Symbol</div>
+              <div className="text-lg font-semibold text-white">{symbol}</div>
+            </div>
+            <div className="bg-brand-bg-secondary rounded-xl p-4 border border-brand-purple-900/30">
+              <div className="text-sm text-gray-400 mb-1">Network</div>
+              <div className="text-lg font-semibold text-white">Base Sepolia</div>
+            </div>
+            <div className="bg-brand-bg-secondary rounded-xl p-4 border border-brand-purple-900/30">
+              <div className="text-sm text-gray-400 mb-1">Oracle</div>
+              <div className="text-lg font-semibold text-white">Chainlink</div>
+            </div>
+            <div className="bg-brand-bg-secondary rounded-xl p-4 border border-brand-purple-900/30">
+              <div className="text-sm text-gray-400 mb-1">Price Feed</div>
+              <div className="text-lg font-semibold text-white">Live</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Enhanced Quick Market Betting Component
 function QuickMarketBetting() {
@@ -28,6 +176,7 @@ function QuickMarketBetting() {
   const [tokenSearch, setTokenSearch] = useState('');
   const [selectedToken, setSelectedToken] = useState<string>('ETH');
   const { data: currentPrice } = useCurrentPrice(selectedToken);
+  const [showTokenDetails, setShowTokenDetails] = useState<string | null>(null);
 
   // Timeframe state
   const [selectedTimeframe, setSelectedTimeframe] = useState<'15s' | '30s' | '1m' | '5m' | '30m' | 'custom'>('1m');
@@ -88,13 +237,22 @@ function QuickMarketBetting() {
   };
 
   return (
-    <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-xl p-8">
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold text-white mb-2">Quick Market Prediction</h3>
-        <p className="text-sm text-gray-400">
-          Search for any token, select timeframe, and predict UP or DOWN
-        </p>
-      </div>
+    <>
+      {/* Token Details Modal */}
+      {showTokenDetails && (
+        <TokenDetailsModal
+          symbol={showTokenDetails}
+          onClose={() => setShowTokenDetails(null)}
+        />
+      )}
+
+      <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-xl p-8">
+        <div className="mb-6">
+          <h3 className="text-2xl font-bold text-white mb-2">Quick Market Prediction</h3>
+          <p className="text-sm text-gray-400">
+            Search for any token, select timeframe, and predict UP or DOWN. Click the chart icon to view details.
+          </p>
+        </div>
 
       {!isConnected ? (
         <div className="text-center py-8">
@@ -116,23 +274,22 @@ function QuickMarketBetting() {
               className="w-full px-4 py-3 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 transition-all"
             />
 
-            {/* Token Selection Grid */}
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3">
+            {/* Token Selection Grid with Live Prices */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mt-3">
               {filteredTokens.map((token) => (
-                <button
+                <TokenCard
                   key={token}
+                  symbol={token}
+                  isSelected={selectedToken === token}
                   onClick={() => {
                     setSelectedToken(token);
                     setTokenSearch('');
                   }}
-                  className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
-                    selectedToken === token
-                      ? 'bg-gradient-primary text-white shadow-glow-primary'
-                      : 'bg-brand-bg-secondary border border-brand-purple-900/50 text-gray-300 hover:border-brand-purple-500'
-                  }`}
-                >
-                  {token}
-                </button>
+                  onDetailsClick={(e) => {
+                    e.stopPropagation();
+                    setShowTokenDetails(token);
+                  }}
+                />
               ))}
             </div>
           </div>
@@ -275,7 +432,8 @@ function QuickMarketBetting() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 
