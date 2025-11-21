@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAccount, useChainId } from 'wagmi';
 import {
   usePredictionCounter,
+  usePrediction,
   useCurrentPrice,
   useCreatePrediction,
   usePlacePredictionBet,
@@ -18,6 +19,7 @@ import { TokenToggle } from '@/components/TokenSelector';
 import { BASE_SEPOLIA_TOKENS, TokenInfo } from '@/config/tokens.base';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { TokenChart } from '@/components/crypto/TokenChart';
+import { formatEth, formatDate } from '@/lib/utils';
 
 // Token Details Modal
 function TokenDetailsModal({
@@ -125,7 +127,8 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
   const { isConnected } = useAccount();
   const [betAmount, setBetAmount] = useState('0.01');
   const [selectedDirection, setSelectedDirection] = useState<'up' | 'down' | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'15m' | '30m' | '1h' | '4h' | '1d'>('1h');
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'15s' | '30s' | '1m' | '5m' | '30m' | 'custom'>('1m');
+  const [customHours, setCustomHours] = useState('1');
   const [showBetConfig, setShowBetConfig] = useState(false);
   const { data: currentPrice } = useCurrentPrice(token.symbol);
   const { createPrediction, isPending: isCreatingPrediction } = useCreatePrediction();
@@ -139,12 +142,13 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
 
   const getTimeframeSeconds = () => {
     switch (selectedTimeframe) {
-      case '15m': return 900;
+      case '15s': return 15;
+      case '30s': return 30;
+      case '1m': return 60;
+      case '5m': return 300;
       case '30m': return 1800;
-      case '1h': return 3600;
-      case '4h': return 14400;
-      case '1d': return 86400;
-      default: return 3600;
+      case 'custom': return parseInt(customHours) * 3600;
+      default: return 60;
     }
   };
 
@@ -247,8 +251,8 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
             <label className="block text-sm font-semibold mb-2 text-gray-300">
               Timeframe
             </label>
-            <div className="grid grid-cols-5 gap-2">
-              {(['15m', '30m', '1h', '4h', '1d'] as const).map((timeframe) => (
+            <div className="grid grid-cols-3 gap-2 mb-2">
+              {(['15s', '30s', '1m', '5m', '30m', 'custom'] as const).map((timeframe) => (
                 <button
                   key={timeframe}
                   onClick={() => setSelectedTimeframe(timeframe)}
@@ -258,10 +262,24 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
                       : 'bg-brand-bg-secondary text-gray-300 hover:bg-brand-purple-900/30'
                   }`}
                 >
-                  {timeframe}
+                  {timeframe === 'custom' ? 'Custom' : timeframe}
                 </button>
               ))}
             </div>
+            {selectedTimeframe === 'custom' && (
+              <div className="mt-2">
+                <label className="block text-xs text-gray-400 mb-1">Hours</label>
+                <input
+                  type="number"
+                  value={customHours}
+                  onChange={(e) => setCustomHours(e.target.value)}
+                  min="1"
+                  step="1"
+                  className="w-full px-3 py-2 rounded-lg border border-brand-purple-900/50 bg-brand-bg-secondary text-white focus:outline-none focus:ring-2 focus:ring-brand-purple-500 text-sm"
+                  placeholder="Enter hours"
+                />
+              </div>
+            )}
           </div>
 
           {/* Bet Amount */}
@@ -575,11 +593,107 @@ function CustomTokenSearch() {
   );
 }
 
+// Active Prediction Card Component
+function ActivePredictionCard({ predictionId }: { predictionId: number }) {
+  const { data: prediction } = usePrediction(predictionId);
+
+  if (!prediction) return null;
+
+  const [
+    id,
+    tokenSymbol,
+    description,
+    startPrice,
+    endTime,
+    totalYesPool,
+    totalNoPool,
+    resolved,
+    winningOutcome,
+    actualEndPrice,
+    creator,
+  ] = prediction as any[];
+
+  const isExpired = Number(endTime) < Date.now() / 1000;
+  const totalPool = totalYesPool + totalNoPool;
+
+  const getStatus = () => {
+    if (resolved) return { label: 'Resolved', color: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200' };
+    if (isExpired && !resolved) return { label: 'Awaiting Resolution', color: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' };
+    return { label: 'Active', color: 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' };
+  };
+
+  const status = getStatus();
+
+  return (
+    <Link href={`/crypto/predictions/${predictionId}`}>
+      <div className="bg-brand-bg-card rounded-xl shadow-lg p-6 hover:shadow-xl hover:border-brand-purple-500 transition-all border-2 border-transparent cursor-pointer">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${status.color}`}>
+                {status.label}
+              </span>
+              <span className="px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200">
+                {tokenSymbol}
+              </span>
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">
+              {description}
+            </h3>
+            <div className="text-sm text-gray-400">
+              <span>Ends {formatDate(endTime)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+            <div className="text-sm font-semibold text-green-800 dark:text-green-200 mb-1">YES Pool</div>
+            <div className="text-xl font-bold text-green-600 dark:text-green-400">
+              {formatEth(totalYesPool)} ETH
+            </div>
+          </div>
+
+          <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
+            <div className="text-sm font-semibold text-red-800 dark:text-red-200 mb-1">NO Pool</div>
+            <div className="text-xl font-bold text-red-600 dark:text-red-400">
+              {formatEth(totalNoPool)} ETH
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-brand-bg-secondary rounded-lg p-4 border border-brand-purple-900/30">
+          <div className="text-center">
+            <div className="text-sm text-gray-400 mb-1">Total Pool</div>
+            <div className="text-2xl font-bold text-white">
+              {formatEth(totalPool)} ETH
+            </div>
+          </div>
+        </div>
+
+        {resolved && (
+          <div className="mt-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+            <div className="text-center">
+              <div className="text-sm font-semibold text-purple-900 dark:text-purple-200 mb-1">
+                Winner: {winningOutcome ? 'YES' : 'NO'}
+              </div>
+              <div className="text-xs text-gray-400">
+                End Price: ${Number(actualEndPrice) / 1e8}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </Link>
+  );
+}
+
 export default function CryptoPredictionsPage() {
   const router = useRouter();
   const chainId = useChainId();
   const { address, isConnected } = useAccount();
   const { createPrediction, isPending: isCreating, isSuccess: isCreateSuccess } = useCreatePrediction();
+  const { data: predictionCounter } = usePredictionCounter();
 
   const [selectedToken, setSelectedToken] = useState<TokenInfo>(BASE_SEPOLIA_TOKENS.ETH);
   const [customDescription, setCustomDescription] = useState('');
@@ -832,11 +946,17 @@ export default function CryptoPredictionsPage() {
             </div>
           </div>
 
-          <div className="mt-8 text-center">
-            <Link href="/crypto" className="text-brand-purple-400 hover:text-brand-purple-300 font-semibold">
-              View All Active Predictions →
-            </Link>
-          </div>
+          {/* Active Predictions List */}
+          {predictionCounter && Number(predictionCounter) > 0 && (
+            <div className="mt-12">
+              <h3 className="text-2xl font-bold text-white mb-6">Active Predictions</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: Number(predictionCounter) }, (_, i) => i).reverse().map((id) => (
+                  <ActivePredictionCard key={id} predictionId={id} />
+                ))}
+              </div>
+            </div>
+          )}
         </section>
       </main>
 
