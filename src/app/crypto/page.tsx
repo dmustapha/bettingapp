@@ -461,11 +461,25 @@ function CustomTokenSearch({ onViewDetails }: { onViewDetails: (token: { symbol:
 
   // Calculate timeframe in seconds
   const getTimeframeSeconds = () => {
+    if (selectedTimeframe === 'custom') {
+      const time = parseInt(customTime) || 1;
+      switch (customTimeUnit) {
+        case 's': return time;
+        case 'm': return time * 60;
+        case 'h': return time * 3600;
+        default: return 60;
+      }
+    }
+
     switch (selectedTimeframe) {
-      case '1h': return 3600;     // 1 hour
-      case '4h': return 14400;    // 4 hours
-      case '24h': return 86400;   // 24 hours
-      case '7d': return 604800;   // 7 days
+      case '15s': return 15;
+      case '30s': return 30;
+      case '1m': return 60;
+      case '5m': return 300;
+      case '15m': return 900;
+      case '1h': return 3600;
+      case '4h': return 14400;
+      case '24h': return 86400;
       default: return 3600;
     }
   };
