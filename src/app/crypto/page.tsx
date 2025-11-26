@@ -16,7 +16,6 @@ import {
   TIMEFRAMES,
 } from '@/hooks/useCryptoMarketBets';
 import { useCoinGeckoPrice } from '@/hooks/useCoinGeckoPrice';
-import { hasChainlinkFeed } from '@/config/tokens.config';
 import { MainNav } from '@/components/layout/MainNav';
 import { Footer } from '@/components';
 import { TokenToggle } from '@/components/TokenSelector';
@@ -155,9 +154,6 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
   const [counterBeforeCreate, setCounterBeforeCreate] = useState<number | null>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  // Check if this token has Chainlink support for betting
-  const canBet = hasChainlinkFeed(token.symbol);
-
   const formatPrice = (price: number | undefined) => {
     if (!price) return '---';
     return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -293,17 +289,10 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
         </div>
       </div>
 
-      {/* Show badge if token doesn't support betting */}
-      {!canBet && (
-        <div className="mb-4 px-3 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-          <p className="text-xs text-yellow-400 text-center">Price display only - betting not available on testnet</p>
-        </div>
-      )}
-
       <div className="grid grid-cols-2 gap-3 mb-4">
         <button
           onClick={() => handleDirectionSelect('up')}
-          disabled={!isConnected || showBetConfig || !canBet}
+          disabled={!isConnected || showBetConfig}
           className={`py-4 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 ${
             selectedDirection === 'up'
               ? 'bg-brand-success border-2 border-brand-success text-white shadow-lg'
@@ -315,7 +304,7 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
         </button>
         <button
           onClick={() => handleDirectionSelect('down')}
-          disabled={!isConnected || showBetConfig || !canBet}
+          disabled={!isConnected || showBetConfig}
           className={`py-4 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 ${
             selectedDirection === 'down'
               ? 'bg-brand-error border-2 border-brand-error text-white shadow-lg'
@@ -440,7 +429,7 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
 
       {!showBetConfig && (
         <div className="text-xs text-center text-gray-400">
-          {!canBet ? 'View price only' : isConnected ? 'Click Bull or Bear to start!' : 'Connect wallet to start'}
+          {isConnected ? 'Click Bull or Bear to start!' : 'Connect wallet to start'}
         </div>
       )}
     </div>
@@ -460,8 +449,7 @@ function CustomTokenSearch({ onViewDetails }: { onViewDetails: (token: { symbol:
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   // Use CoinGecko for display price
-  const { data: coinGeckoPrice } = useCoinGeckoPrice(selectedToken);
-  const canBet = hasChainlinkFeed(selectedToken);
+  const { data: coinGeckoPrice} = useCoinGeckoPrice(selectedToken);
 
   // Timeframe state
   const [selectedTimeframe, setSelectedTimeframe] = useState<'15s' | '30s' | '1m' | '5m' | '15m' | '1h' | '4h' | '24h' | 'custom'>('15s');
@@ -693,9 +681,6 @@ function CustomTokenSearch({ onViewDetails }: { onViewDetails: (token: { symbol:
               <div>
                 <div className="text-sm text-gray-400">Selected Token</div>
                 <div className="text-2xl font-bold text-white">{selectedToken}</div>
-                {!canBet && (
-                  <div className="text-xs text-yellow-400 mt-1">⚠️ Betting not available on testnet</div>
-                )}
               </div>
               <div className="text-right">
                 <div className="text-sm text-gray-400">Current Price</div>
@@ -827,12 +812,10 @@ function CustomTokenSearch({ onViewDetails }: { onViewDetails: (token: { symbol:
           {/* Place Bet Button */}
           <button
             onClick={handlePlaceBet}
-            disabled={!selectedDirection || isCreatingPrediction || isPlacingBet || showSuccessMessage || !canBet}
+            disabled={!selectedDirection || isCreatingPrediction || isPlacingBet || showSuccessMessage}
             className="w-full bg-gradient-primary hover:shadow-glow-primary text-white font-bold py-4 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
           >
-            {!canBet ? (
-              '⚠️ Betting not available for this token on testnet'
-            ) : isCreatingPrediction || isPlacingBet ? (
+            {isCreatingPrediction || isPlacingBet ? (
               <span className="flex items-center justify-center gap-2">
                 <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />

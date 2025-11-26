@@ -3,8 +3,9 @@ import { parseEther } from 'viem';
 import TOKENS, { getFeaturedTokens, getAllTokenSymbols } from '@/config/tokens.config';
 
 // Deployed on Base Sepolia - ERC-20 USDC + ETH version with flexible timeframes
+// Original contract with user's bets
 const CRYPTO_MARKET_BETS_ADDRESS = (process.env.NEXT_PUBLIC_CRYPTO_MARKET_BETS_CONTRACT_ADDRESS ||
-  '0x65328b5E7151d2AA62703756bcD2CC0Bd4960E34') as `0x${string}`;
+  '0x6BA9aA2B3582faB1CeB7923c5D20A0531F722161') as `0x${string}`;
 
 const CRYPTO_MARKET_BETS_ABI = [
   {
