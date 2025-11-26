@@ -404,6 +404,43 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
             />
           </div>
 
+          {/* Potential Payout Calculator */}
+          {betAmount && parseFloat(betAmount) > 0 && (
+            <div className="bg-gradient-to-br from-brand-purple-500/10 to-brand-purple-900/10 border border-brand-purple-500/30 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-semibold text-gray-300">Potential Payout</span>
+                <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  5% platform fee
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                {/* Estimated Win */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-400">If you win (50/50 odds)</span>
+                  <span className={`font-bold ${selectedDirection === 'up' ? 'text-green-400' : 'text-red-400'}`}>
+                    {(parseFloat(betAmount) * 2 * 0.95).toFixed(4)} ETH
+                  </span>
+                </div>
+
+                {/* Profit */}
+                <div className="flex items-center justify-between pt-2 border-t border-brand-purple-900/30">
+                  <span className="text-sm font-semibold text-gray-200">Potential Profit</span>
+                  <span className={`text-lg font-bold ${selectedDirection === 'up' ? 'text-green-400' : 'text-red-400'}`}>
+                    +{((parseFloat(betAmount) * 2 * 0.95) - parseFloat(betAmount)).toFixed(4)} ETH
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-3 text-xs text-center text-gray-500">
+                Actual payout varies based on total pool and winning side
+              </div>
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-3">
             <button
