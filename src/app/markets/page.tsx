@@ -8,7 +8,7 @@ import { ChartPreview, MiniChart } from '@/components/crypto/ChartPreview';
 import { AnimatedBitcoinIcon } from '@/components/crypto/AnimatedBitcoinIcon';
 import { WagerXLogo } from '@/components/Logo';
 import { useWagerCounter, useWager } from '@/hooks/useMultiWagers';
-import { formatEth, shortenAddress } from '@/lib/utils';
+import { formatEth, formatUsdc, shortenAddress } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLivePrices } from '@/hooks/useLivePrices';
@@ -117,11 +117,15 @@ function LiveWagerCard({ wagerId, currentUserAddress }: { wagerId: number; curre
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <div className="text-xs text-gray-400 mb-1">Stake Amount</div>
-            <div className="font-bold">{formatEth(wager.stakeAmount)} {wager.isEth ? 'ETH' : 'USDC'}</div>
+            <div className="font-bold">
+              {wager.isEth ? formatEth(wager.stakeAmount) : formatUsdc(wager.stakeAmount)} {wager.isEth ? 'ETH' : 'USDC'}
+            </div>
           </div>
           <div>
             <div className="text-xs text-gray-400 mb-1">Total Pool</div>
-            <div className="font-bold text-brand-success">{formatEth(wager.stakeAmount * BigInt(wager.currentParticipants))} {wager.isEth ? 'ETH' : 'USDC'}</div>
+            <div className="font-bold text-brand-success">
+              {wager.isEth ? formatEth(wager.stakeAmount * BigInt(wager.currentParticipants)) : formatUsdc(wager.stakeAmount * BigInt(wager.currentParticipants))} {wager.isEth ? 'ETH' : 'USDC'}
+            </div>
           </div>
         </div>
         <button

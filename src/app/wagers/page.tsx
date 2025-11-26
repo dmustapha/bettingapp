@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
 import { useWagerCounter, useWager } from '@/hooks/useMultiWagers';
-import { formatEth, formatDate, shortenAddress } from '@/lib/utils';
+import { formatEth, formatUsdc, formatDate, shortenAddress } from '@/lib/utils';
 import { MainNav } from '@/components/layout/MainNav';
 import { Footer } from '@/components';
 import { motion } from 'framer-motion';
@@ -94,13 +94,13 @@ function WagerCard({ wagerId }: { wagerId: number }) {
           <div>
             <span className="text-gray-400">Stake:</span>
             <span className="ml-2 font-bold text-white">
-              {formatEth(wager.stakeAmount)} {wager.isEth ? 'ETH' : 'USDC'}
+              {wager.isEth ? formatEth(wager.stakeAmount) : formatUsdc(wager.stakeAmount)} {wager.isEth ? 'ETH' : 'USDC'}
             </span>
           </div>
           <div>
             <span className="text-gray-400">Current Pool:</span>
             <span className="ml-2 font-bold text-brand-success">
-              {formatEth(wager.stakeAmount * BigInt(wager.currentParticipants))} {wager.isEth ? 'ETH' : 'USDC'}
+              {wager.isEth ? formatEth(wager.stakeAmount * BigInt(wager.currentParticipants)) : formatUsdc(wager.stakeAmount * BigInt(wager.currentParticipants))} {wager.isEth ? 'ETH' : 'USDC'}
             </span>
           </div>
         </div>
