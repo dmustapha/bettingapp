@@ -67,7 +67,10 @@
       "Bash(for token in ETH BTC cbETH USDC DAI WETH)",
       "Bash(do)",
       "Bash(echo:*)",
-      "Bash(cast:*)"
+      "Bash(cast:*)",
+      "Bash(git log:*)",
+      "Bash(for token in ETH BTC cbBTC)",
+      "Bash(do echo -n \"$token: \" cast call 0x6BA9aA2B3582faB1CeB7923c5D20A0531F722161 \"getCurrentPrice(string)\" \"$token\" --rpc-url https://base-sepolia-rpc.publicnode.com)"
     ],
     "deny": [],
     "ask": []
