@@ -860,8 +860,9 @@ function HistoryPredictionCard({ predictionId }: { predictionId: number }) {
     }
   }
 
-  // Only show resolved predictions
-  if (!prediction || !resolved) return null;
+  // Show resolved predictions OR expired predictions (awaiting resolution)
+  const isExpired = endTime ? Number(endTime) < Date.now() / 1000 : false;
+  if (!prediction || (!resolved && !isExpired)) return null;
 
   // Check if user has winning unclaimed bets
   const hasWinningUnclaimedBets = userBets && Array.isArray(userBets) && userBets.some((bet: any) => {
@@ -974,8 +975,12 @@ function HistoryPredictionCard({ predictionId }: { predictionId: number }) {
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-              Resolved
+            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+              resolved
+                ? 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
+            }`}>
+              {resolved ? 'Resolved' : 'Awaiting Resolution'}
             </span>
             <span className="px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200">
               {tokenSymbol}
@@ -1181,6 +1186,10 @@ function ActivePredictionCard({ predictionId }: { predictionId: number }) {
 
   // Now we can do conditional returns AFTER all hooks
   if (!prediction) return null;
+
+  // Don't show resolved or expired predictions in Active section
+  // They should be in Bet History
+  if (resolved || isExpired) return null;
 
   const formatTimeRemaining = (seconds: number) => {
     if (seconds < 0) return 'Expired';
