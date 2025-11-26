@@ -924,9 +924,9 @@ function HistoryPredictionCard({ predictionId }: { predictionId: number }) {
     }
   }, [prediction, address, userBets, predictionId, resolved, winningOutcome, timeframe, addBetPoints]);
 
-  const totalPool = (totalUpBets || 0n) + (totalDownBets || 0n) + (totalUpBetsEth || 0n) + (totalDownBetsEth || 0n);
-  const winningPool = winningOutcome ? (totalUpBets || 0n) + (totalUpBetsEth || 0n) : (totalDownBets || 0n) + (totalDownBetsEth || 0n);
-  const losingPool = winningOutcome ? (totalDownBets || 0n) + (totalDownBetsEth || 0n) : (totalUpBets || 0n) + (totalUpBetsEth || 0n);
+  const totalPool = (totalUpBets || BigInt(0)) + (totalDownBets || BigInt(0)) + (totalUpBetsEth || BigInt(0)) + (totalDownBetsEth || BigInt(0));
+  const winningPool = winningOutcome ? (totalUpBets || BigInt(0)) + (totalUpBetsEth || BigInt(0)) : (totalDownBets || BigInt(0)) + (totalDownBetsEth || BigInt(0));
+  const losingPool = winningOutcome ? (totalDownBets || BigInt(0)) + (totalDownBetsEth || BigInt(0)) : (totalUpBets || BigInt(0)) + (totalUpBetsEth || BigInt(0));
 
   const formatPrice = (price: bigint | undefined) => {
     if (!price) return '---';
@@ -1002,17 +1002,17 @@ function HistoryPredictionCard({ predictionId }: { predictionId: number }) {
         }`}>
           <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">UP Pool {winningOutcome && '👑'}</div>
           <div className={`space-y-0.5 ${winningOutcome ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'}`}>
-            {totalUpBetsEth && totalUpBetsEth > 0n && (
+            {totalUpBetsEth && totalUpBetsEth > BigInt(0) && (
               <div className="text-lg font-bold">
                 {formatEth(totalUpBetsEth)} ETH
               </div>
             )}
-            {totalUpBets && totalUpBets > 0n && (
+            {totalUpBets && totalUpBets > BigInt(0) && (
               <div className="text-lg font-bold">
                 {(Number(totalUpBets) / 1e6).toFixed(2)} USDC
               </div>
             )}
-            {(!totalUpBetsEth || totalUpBetsEth === 0n) && (!totalUpBets || totalUpBets === 0n) && (
+            {(!totalUpBetsEth || totalUpBetsEth === BigInt(0)) && (!totalUpBets || totalUpBets === BigInt(0)) && (
               <div className="text-lg font-bold">0</div>
             )}
           </div>
@@ -1025,17 +1025,17 @@ function HistoryPredictionCard({ predictionId }: { predictionId: number }) {
         }`}>
           <div className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">DOWN Pool {!winningOutcome && '👑'}</div>
           <div className={`space-y-0.5 ${!winningOutcome ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
-            {totalDownBetsEth && totalDownBetsEth > 0n && (
+            {totalDownBetsEth && totalDownBetsEth > BigInt(0) && (
               <div className="text-lg font-bold">
                 {formatEth(totalDownBetsEth)} ETH
               </div>
             )}
-            {totalDownBets && totalDownBets > 0n && (
+            {totalDownBets && totalDownBets > BigInt(0) && (
               <div className="text-lg font-bold">
                 {(Number(totalDownBets) / 1e6).toFixed(2)} USDC
               </div>
             )}
-            {(!totalDownBetsEth || totalDownBetsEth === 0n) && (!totalDownBets || totalDownBets === 0n) && (
+            {(!totalDownBetsEth || totalDownBetsEth === BigInt(0)) && (!totalDownBets || totalDownBets === BigInt(0)) && (
               <div className="text-lg font-bold">0</div>
             )}
           </div>
@@ -1135,7 +1135,7 @@ function ActivePredictionCard({ predictionId }: { predictionId: number }) {
   }
 
   const isExpired = endTime ? Number(endTime) < Date.now() / 1000 : false;
-  const totalPool = (totalYesPool || 0n) + (totalNoPool || 0n);
+  const totalPool = (totalYesPool || BigInt(0)) + (totalNoPool || BigInt(0));
 
   // Countdown timer for active predictions - must be called before any conditional returns
   useEffect(() => {
