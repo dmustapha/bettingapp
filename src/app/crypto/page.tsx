@@ -197,10 +197,10 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
       // Refetch counter to get updated value
       refetchCounter();
 
-      // Place the bet on the newly created prediction
+      // Place the bet on the newly created prediction (using ETH)
       if (selectedDirection) {
         const direction = selectedDirection === 'up'; // true for up, false for down
-        placePredictionBet(newPredictionId, direction, betAmount);
+        placePredictionBet(newPredictionId, direction, betAmount, 'ETH');
       }
     }
   }, [isCreateSuccess, counterBeforeCreate, createdPredictionId, selectedDirection, betAmount, placePredictionBet, refetchCounter]);
@@ -515,10 +515,10 @@ function CustomTokenSearch({ onViewDetails }: { onViewDetails: (token: { symbol:
       // Refetch counter to get updated value
       refetchCounter();
 
-      // Place the bet on the newly created prediction
+      // Place the bet on the newly created prediction (using ETH)
       if (selectedDirection) {
         const direction = selectedDirection === 'up'; // true for up, false for down
-        placePredictionBet(newPredictionId, direction, betAmount);
+        placePredictionBet(newPredictionId, direction, betAmount, 'ETH');
       }
     }
   }, [isCreateSuccess, counterBeforeCreate, createdPredictionId, selectedDirection, betAmount, placePredictionBet, refetchCounter]);
