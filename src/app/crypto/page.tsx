@@ -136,7 +136,9 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
   const { isConnected } = useAccount();
   const [betAmount, setBetAmount] = useState('0.01');
   const [selectedDirection, setSelectedDirection] = useState<'up' | 'down' | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'1h' | '4h' | '24h' | '7d'>('1h');
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'15s' | '30s' | '1m' | '5m' | '15m' | '1h' | '4h' | '24h' | 'custom'>('1h');
+  const [customTime, setCustomTime] = useState('1');
+  const [customTimeUnit, setCustomTimeUnit] = useState<'s' | 'm' | 'h'>('m');
   const [showBetConfig, setShowBetConfig] = useState(false);
   const { data: currentPrice } = useCurrentPrice(token.symbol);
   const { createPrediction, isPending: isCreatingPrediction, isSuccess: isCreateSuccess } = useCreatePrediction();
@@ -153,11 +155,25 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
   };
 
   const getTimeframeSeconds = () => {
+    if (selectedTimeframe === 'custom') {
+      const time = parseInt(customTime) || 1;
+      switch (customTimeUnit) {
+        case 's': return time;
+        case 'm': return time * 60;
+        case 'h': return time * 3600;
+        default: return 60;
+      }
+    }
+
     switch (selectedTimeframe) {
-      case '1h': return 3600;     // 1 hour
-      case '4h': return 14400;    // 4 hours
-      case '24h': return 86400;   // 24 hours
-      case '7d': return 604800;   // 7 days
+      case '15s': return 15;
+      case '30s': return 30;
+      case '1m': return 60;
+      case '5m': return 300;
+      case '15m': return 900;
+      case '1h': return 3600;
+      case '4h': return 14400;
+      case '24h': return 86400;
       default: return 3600;
     }
   };
