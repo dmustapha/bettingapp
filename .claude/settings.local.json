@@ -63,7 +63,10 @@
       "Bash(npx tsc:*)",
       "Bash(node -c:*)",
       "Bash(vercel --prod)",
-      "Bash(vercel:*)"
+      "Bash(vercel:*)",
+      "Bash(for token in ETH BTC cbETH USDC DAI WETH)",
+      "Bash(do)",
+      "Bash(echo:*)"
     ],
     "deny": [],
     "ask": []

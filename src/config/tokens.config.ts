@@ -330,10 +330,19 @@ export function getTokensByCategory(category: TokenConfig['category']): TokenCon
 }
 
 /**
- * Get featured tokens
+ * Tokens with working Chainlink price feeds on Base Sepolia
+ * These are the only tokens with registered and working price feeds on the testnet contract
+ */
+const BASE_SEPOLIA_WORKING_FEEDS = ['ETH', 'cbBTC'];
+
+/**
+ * Get featured tokens (only those with working price feeds on Base Sepolia)
  */
 export function getFeaturedTokens(): TokenConfig[] {
-  return Object.values(TOKENS).filter((token) => token.featured);
+  // On Base Sepolia, only return tokens with working Chainlink feeds
+  return Object.values(TOKENS).filter(
+    (token) => BASE_SEPOLIA_WORKING_FEEDS.includes(token.symbol)
+  );
 }
 
 /**
