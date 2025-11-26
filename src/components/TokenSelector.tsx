@@ -15,12 +15,17 @@ export function TokenSelector({ selectedToken, onTokenChange, chainId = 84532 }:
   const { address } = useAccount();
   const [isOpen, setIsOpen] = useState(false);
 
-  const tokens = getAllTokens(chainId);
+  // CRITICAL: Base Sepolia only has ETH/USD Chainlink price feed
+  // Filter to only ETH on testnet (84532), all tokens on mainnet (8453)
+  const allTokens = getAllTokens(chainId);
+  const tokens = chainId === 84532
+    ? allTokens.filter(token => token.symbol === 'ETH')
+    : allTokens;
 
   return (
     <div className="relative">
       <label className="block text-sm font-semibold mb-2 text-gray-300">
-        Select Token *
+        Select Token * {chainId === 84532 && <span className="text-xs text-yellow-400">(Only ETH on Sepolia)</span>}
       </label>
 
       {/* Selected Token Display */}
@@ -123,12 +128,17 @@ function TokenBalance({ address, token }: { address: `0x${string}`; token: Token
 
 // Compact Token Toggle (Alternative design)
 export function TokenToggle({ selectedToken, onTokenChange, chainId = 84532 }: TokenSelectorProps) {
-  const tokens = getAllTokens(chainId);
+  // CRITICAL: Base Sepolia only has ETH/USD Chainlink price feed
+  // Filter to only ETH on testnet (84532), all tokens on mainnet (8453)
+  const allTokens = getAllTokens(chainId);
+  const tokens = chainId === 84532
+    ? allTokens.filter(token => token.symbol === 'ETH')
+    : allTokens;
 
   return (
     <div>
       <label className="block text-sm font-semibold mb-2 text-gray-300">
-        Select Token *
+        Select Token * {chainId === 84532 && <span className="text-xs text-yellow-400">(Only ETH on Sepolia)</span>}
       </label>
       <div className="flex gap-2 flex-wrap">
         {tokens.map((token) => (

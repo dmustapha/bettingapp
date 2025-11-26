@@ -951,7 +951,7 @@ function HistoryPredictionCard({ predictionId }: { predictionId: number }) {
       totalBetAmountUSD += (Number(betAmountEth) / 1e18) * 3000;
     });
     if (totalBetAmountUSD > 0) {
-      pointsEarned = calculatePoints(totalBetAmountUSD, Number(timeframe), userWon);
+      pointsEarned = calculatePoints(totalBetAmountUSD, Number(timeframe), userWon ?? false);
     }
   }
 
@@ -1123,7 +1123,17 @@ function ActivePredictionCard({ predictionId }: { predictionId: number }) {
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
 
   // Extract data before any conditional returns
-  let id, tokenSymbol, description, startPrice, endTime, totalYesPool, totalNoPool, resolved, winningOutcome, actualEndPrice, creator;
+  let id: bigint | undefined;
+  let tokenSymbol: string | undefined;
+  let description: string | undefined;
+  let startPrice: bigint | undefined;
+  let endTime: bigint | undefined;
+  let totalYesPool: bigint | undefined;
+  let totalNoPool: bigint | undefined;
+  let resolved: boolean | undefined;
+  let winningOutcome: boolean | undefined;
+  let actualEndPrice: bigint | undefined;
+  let creator: string | undefined;
 
   if (prediction) {
     if (Array.isArray(prediction)) {
@@ -1197,7 +1207,7 @@ function ActivePredictionCard({ predictionId }: { predictionId: number }) {
                 <span className="text-gray-500">remaining</span>
               </div>
             ) : (
-              <span>Ended {formatDate(endTime)}</span>
+              <span>Ended {endTime ? formatDate(endTime) : 'N/A'}</span>
             )}
           </div>
         </div>

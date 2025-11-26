@@ -153,19 +153,26 @@ export async function fetchPriceHistory(
       return [];
     }
 
+    console.log(`Fetching price history for ${symbol} (${coinId}) - ${days} days`);
+
     // For detailed OHLC data, we need the /ohlc endpoint (limited to 1, 7, 14, 30, 90, 180, 365 days)
     // For simplicity, we'll use the market_chart endpoint and create OHLC approximations
-    const response = await fetch(
-      `${COINGECKO_API_BASE}/coins/${coinId}/market_chart?vs_currency=usd&days=${days}&interval=${days <= 1 ? 'hourly' : 'daily'}`
-    );
+    const url = `${COINGECKO_API_BASE}/coins/${coinId}/market_chart?vs_currency=usd&days=${days}&interval=${days <= 1 ? 'hourly' : 'daily'}`;
+    console.log(`Fetching from: ${url}`);
+
+    const response = await fetch(url);
 
     if (!response.ok) {
+      console.error(`HTTP error! status: ${response.status}`);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
 
+    console.log(`Received ${data.prices?.length || 0} price points`);
+
     if (!data.prices || data.prices.length === 0) {
+      console.warn('No price data returned from CoinGecko');
       return [];
     }
 
@@ -206,7 +213,9 @@ export async function fetchPriceHistory(
       }
     }
 
-    return priceHistory.sort((a, b) => a.time - b.time);
+    const sortedHistory = priceHistory.sort((a, b) => a.time - b.time);
+    console.log(`Processed ${sortedHistory.length} OHLC data points`);
+    return sortedHistory;
   } catch (error) {
     console.error(`Error fetching price history for ${symbol}:`, error);
     return [];

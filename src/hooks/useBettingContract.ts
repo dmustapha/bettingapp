@@ -76,7 +76,7 @@ export function useCreateMarket() {
       address: BETTING_MARKET_ADDRESS,
       abi: BETTING_MARKET_ABI,
       functionName: 'createMarket',
-      args: [description, category, BigInt(endTime), parseEther(minBet)],
+      args: [description, BigInt(endTime), parseEther(minBet)],
     });
   };
 

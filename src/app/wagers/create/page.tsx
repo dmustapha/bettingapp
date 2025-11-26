@@ -1,32 +1,52 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAccount, useChainId } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useCreateWager } from '@/hooks/useP2PWagers';
+import { useCreateWager, useWagerCounter, MULTI_WAGERS_ADDRESS } from '@/hooks/useMultiWagers';
 import { MainNav } from '@/components/layout/MainNav';
 import { Footer } from '@/components';
 import Link from 'next/link';
-import { TokenToggle } from '@/components/TokenSelector';
-import { BASE_SEPOLIA_TOKENS, TokenInfo } from '@/config/tokens.base';
+import { TokenApprovalButton } from '@/components/TokenApprovalButton';
+import { TestnetUSDCInfo } from '@/components/TestnetUSDCInfo';
+import { motion } from 'framer-motion';
 
 export default function CreateWagerPage() {
   const router = useRouter();
   const { address, isConnected } = useAccount();
-  const chainId = useChainId();
   const { createWager, isPending, isConfirming, isSuccess, error } = useCreateWager();
+  const { data: wagerCounter, refetch: refetchCounter } = useWagerCounter();
 
   const [claim, setClaim] = useState('');
   const [resolver, setResolver] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [expiryTime, setExpiryTime] = useState('');
-  const [stakeAmount, setStakeAmount] = useState('0.01');
-  const [selectedToken, setSelectedToken] = useState<TokenInfo>(BASE_SEPOLIA_TOKENS.ETH);
+  const [stakeAmount, setStakeAmount] = useState('10');
+  const [createdWagerId, setCreatedWagerId] = useState<number | null>(null);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isPublic, setIsPublic] = useState(true);
+  const [maxParticipants, setMaxParticipants] = useState('2');
+  const [paymentMethod, setPaymentMethod] = useState<'USDC' | 'ETH'>('USDC');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // When switching to private, reset max participants to 2
+  useEffect(() => {
+    if (!isPublic) {
+      setMaxParticipants('2');
+    }
+  }, [isPublic]);
 
+  // Update stake amount when payment method changes
+  useEffect(() => {
+    if (paymentMethod === 'ETH' && stakeAmount === '10') {
+      setStakeAmount('0.01');
+    } else if (paymentMethod === 'USDC' && stakeAmount === '0.01') {
+      setStakeAmount('10');
+    }
+  }, [paymentMethod]);
+
+  const handleSubmit = () => {
     if (!claim || !resolver || !expiryDate || !expiryTime || !stakeAmount) {
       alert('Please fill in all fields');
       return;
@@ -53,15 +73,32 @@ export default function CreateWagerPage() {
       return;
     }
 
-    createWager(claim, resolver, expiryTimeUnix, stakeAmount);
+    // Store the current wager counter before creating
+    if (wagerCounter !== undefined) {
+      setCreatedWagerId(Number(wagerCounter));
+    }
+
+    createWager(claim, resolver, expiryTimeUnix, isPublic, parseInt(maxParticipants), stakeAmount, paymentMethod);
   };
 
-  // Redirect on success
-  if (isSuccess) {
-    setTimeout(() => {
-      router.push('/wagers');
-    }, 2000);
-  }
+  // Show share dialog on success
+  useEffect(() => {
+    if (isSuccess && createdWagerId !== null) {
+      refetchCounter();
+      setShowShareDialog(true);
+    }
+  }, [isSuccess, createdWagerId, refetchCounter]);
+
+  const handleCopyLink = () => {
+    const wagerUrl = `${window.location.origin}/wagers/${createdWagerId}`;
+    navigator.clipboard.writeText(wagerUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleViewWager = () => {
+    router.push(`/wagers/${createdWagerId}`);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-dark text-white">
@@ -76,7 +113,13 @@ export default function CreateWagerPage() {
             </Link>
           </div>
 
-          <div className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-xl p-8">
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.2 }}
+            className="bg-brand-bg-card border border-brand-purple-900/50 rounded-2xl shadow-xl p-8"
+          >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center text-2xl shadow-lg">
                 🤝
@@ -94,7 +137,10 @@ export default function CreateWagerPage() {
                 <ConnectButton />
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-6">
+                {/* USDC Balance & Info */}
+                <TestnetUSDCInfo />
+
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-gray-300">
                     Wager Claim *
@@ -129,36 +175,135 @@ export default function CreateWagerPage() {
                   </p>
                 </div>
 
-                {/* Token Selector */}
-                <TokenToggle
-                  selectedToken={selectedToken}
-                  onTokenChange={setSelectedToken}
-                  chainId={chainId}
-                />
+                {/* Payment Method Toggle */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
+                    Payment Method *
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('USDC')}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        paymentMethod === 'USDC'
+                          ? 'border-brand-purple-500 bg-brand-purple-500/20'
+                          : 'border-brand-purple-900/50 bg-brand-bg-secondary hover:border-brand-purple-700'
+                      }`}
+                    >
+                      <div className="text-xl mb-1">💵</div>
+                      <div className="font-semibold text-white">USDC</div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        Stablecoin
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('ETH')}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        paymentMethod === 'ETH'
+                          ? 'border-brand-purple-500 bg-brand-purple-500/20'
+                          : 'border-brand-purple-900/50 bg-brand-bg-secondary hover:border-brand-purple-700'
+                      }`}
+                    >
+                      <div className="text-xl mb-1">⟠</div>
+                      <div className="font-semibold text-white">ETH</div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        Native token
+                      </div>
+                    </button>
+                  </div>
+                </div>
 
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-gray-300">
-                    Stake Amount ({selectedToken.symbol}) *
+                    Stake Amount ({paymentMethod}) *
                   </label>
                   <div className="relative">
                     <input
                       type="number"
-                      step="0.001"
-                      min="0.001"
+                      step={paymentMethod === 'ETH' ? '0.001' : '1'}
+                      min={paymentMethod === 'ETH' ? '0.001' : '1'}
                       value={stakeAmount}
                       onChange={(e) => setStakeAmount(e.target.value)}
                       className="w-full px-4 py-3 pr-16 rounded-xl border border-brand-purple-900/50 bg-brand-bg-secondary text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple-500 focus:border-brand-purple-500 transition-all"
                       required
                     />
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-                      <span className="text-xl">{selectedToken.icon}</span>
-                      <span className="font-semibold text-gray-400">{selectedToken.symbol}</span>
+                      <span className="text-xl">{paymentMethod === 'ETH' ? '⟠' : '💵'}</span>
+                      <span className="font-semibold text-gray-400">{paymentMethod}</span>
                     </div>
                   </div>
                   <p className="text-sm text-gray-400 mt-1">
-                    The amount you're betting. Your opponent must match this amount.
+                    The amount each participant must stake to join.
                   </p>
                 </div>
+
+                {/* Visibility Toggle */}
+                <div>
+                  <label className="block text-sm font-semibold mb-3 text-gray-300">
+                    Wager Visibility *
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsPublic(true)}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        isPublic
+                          ? 'border-brand-purple-500 bg-brand-purple-500/20'
+                          : 'border-brand-purple-900/50 bg-brand-bg-secondary hover:border-brand-purple-700'
+                      }`}
+                    >
+                      <div className="text-xl mb-1">🌍</div>
+                      <div className="font-semibold text-white">Public</div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        Shows on landing page, anyone can join
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsPublic(false)}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        !isPublic
+                          ? 'border-brand-purple-500 bg-brand-purple-500/20'
+                          : 'border-brand-purple-900/50 bg-brand-bg-secondary hover:border-brand-purple-700'
+                      }`}
+                    >
+                      <div className="text-xl mb-1">🔒</div>
+                      <div className="font-semibold text-white">Private</div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        Only via shared link
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Max Participants - Only show if public */}
+                {isPublic && (
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-gray-300">
+                      Maximum Participants *
+                    </label>
+                    <div className="grid grid-cols-4 gap-3">
+                      {['2', '3', '5', '10'].map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => setMaxParticipants(num)}
+                          className={`py-3 px-4 rounded-xl border-2 font-semibold transition-all ${
+                            maxParticipants === num
+                              ? 'border-brand-purple-500 bg-brand-purple-500/20 text-white'
+                              : 'border-brand-purple-900/50 bg-brand-bg-secondary text-gray-400 hover:border-brand-purple-700'
+                          }`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Total number of participants (including you). Winner takes all!
+                    </p>
+                  </div>
+                )}
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
@@ -198,10 +343,11 @@ export default function CreateWagerPage() {
                     <span>How it works:</span>
                   </h3>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• Your opponent must match your stake to accept</li>
+                    <li>• {isPublic ? 'Anyone can join this wager from the landing page' : 'Only people with your link can join this wager'}</li>
+                    <li>• Up to {maxParticipants} participants can join (each stakes {stakeAmount} {paymentMethod})</li>
                     <li>• The resolver decides who wins after the event</li>
                     <li>• Winner takes the full pool (minus 2% platform fee)</li>
-                    <li>• If no one accepts before expiry, you can cancel and get your stake back</li>
+                    <li>• If no one joins before expiry, you can cancel and get your stake back</li>
                   </ul>
                 </div>
 
@@ -214,37 +360,128 @@ export default function CreateWagerPage() {
                   </div>
                 )}
 
-                {isSuccess && (
+                {isSuccess && !showShareDialog && (
                   <div className="bg-brand-success/10 border border-brand-success/30 rounded-xl p-4">
                     <p className="text-brand-success text-sm flex items-center gap-2">
                       <span>✅</span>
-                      <span>Wager created successfully! Redirecting to wagers...</span>
+                      <span>Wager created successfully!</span>
                     </p>
                   </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={isPending || isConfirming}
-                  className="w-full bg-gradient-primary hover:shadow-glow-primary text-white font-bold py-4 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
-                >
-                  {isPending || isConfirming ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      <span>Creating Wager...</span>
-                    </span>
-                  ) : (
-                    `🎲 Create Wager (${stakeAmount} ${selectedToken.symbol})`
-                  )}
-                </button>
-              </form>
+                {paymentMethod === 'USDC' ? (
+                  <TokenApprovalButton
+                    spenderAddress={MULTI_WAGERS_ADDRESS}
+                    amount={stakeAmount}
+                    decimals={6}
+                    onPlaceBet={handleSubmit}
+                    disabled={isPending || isConfirming || !claim || !resolver || !expiryDate || !expiryTime}
+                    isPending={isPending || isConfirming}
+                    buttonText={`🎲 Create Wager (${stakeAmount} USDC)`}
+                  />
+                ) : (
+                  <button
+                    onClick={handleSubmit}
+                    disabled={isPending || isConfirming || !claim || !resolver || !expiryDate || !expiryTime}
+                    className="w-full py-3 rounded-xl font-semibold bg-gradient-primary text-white hover:shadow-glow-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isPending || isConfirming ? 'Creating Wager...' : `🎲 Create Wager (${stakeAmount} ETH)`}
+                  </button>
+                )}
+              </div>
             )}
-          </div>
+          </motion.div>
         </div>
       </main>
+
+      {/* Share Dialog Modal */}
+      {showShareDialog && createdWagerId !== null && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-brand-bg-card border border-brand-purple-500 rounded-2xl shadow-glow-purple max-w-lg w-full p-8 animate-in zoom-in-95 duration-300">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center text-3xl mx-auto mb-4 shadow-glow-primary">
+                🎉
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Wager Created!</h2>
+              <p className="text-gray-300">Share this wager with others to accept the challenge</p>
+            </div>
+
+            <div className="bg-brand-bg-secondary border border-brand-purple-900/50 rounded-xl p-4 mb-6">
+              <div className="text-xs text-gray-400 mb-2">Wager Link</div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={`${typeof window !== 'undefined' ? window.location.origin : ''}/wagers/${createdWagerId}`}
+                  className="flex-1 bg-brand-bg-tertiary border border-brand-purple-900/50 rounded-lg px-3 py-2 text-sm text-white font-mono"
+                />
+                <button
+                  onClick={handleCopyLink}
+                  className="px-4 py-2 bg-brand-purple-500 hover:bg-brand-purple-600 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 whitespace-nowrap"
+                >
+                  {copied ? (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      Copy
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-brand-purple-500/10 border border-brand-purple-500/30 rounded-xl p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">{isPublic ? '🌍' : '🔒'}</span>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-brand-purple-300 mb-1">
+                    {isPublic ? 'Public Wager Created!' : 'Private Wager Created!'}
+                  </h3>
+                  <ul className="text-sm text-gray-300 space-y-1">
+                    {isPublic ? (
+                      <>
+                        <li>• Your wager is now visible on the landing page</li>
+                        <li>• Anyone can join by matching your stake ({stakeAmount} USDC)</li>
+                        <li>• Up to {maxParticipants} total participants can join - winner takes all!</li>
+                      </>
+                    ) : (
+                      <>
+                        <li>• Share this link with people you want to challenge</li>
+                        <li>• Only people with this link can join your wager</li>
+                        <li>• Up to {maxParticipants} total participants - winner takes all!</li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => router.push('/wagers')}
+                className="flex-1 bg-brand-bg-secondary border border-brand-purple-900/50 hover:bg-brand-bg-tertiary text-white font-semibold py-3 px-6 rounded-xl transition-all"
+              >
+                Back to Wagers
+              </button>
+              <button
+                onClick={handleViewWager}
+                className="flex-1 bg-gradient-primary hover:shadow-glow-primary text-white font-semibold py-3 px-6 rounded-xl transition-all"
+              >
+                View Wager
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

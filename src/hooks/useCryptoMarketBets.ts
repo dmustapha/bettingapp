@@ -2,9 +2,9 @@ import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 
 import { parseEther } from 'viem';
 import TOKENS, { getFeaturedTokens, getAllTokenSymbols } from '@/config/tokens.config';
 
-// Deployed on Base Sepolia
+// Deployed on Base Sepolia - ERC-20 USDC + ETH version with flexible timeframes
 const CRYPTO_MARKET_BETS_ADDRESS = (process.env.NEXT_PUBLIC_CRYPTO_MARKET_BETS_CONTRACT_ADDRESS ||
-  '0x6BA9aA2B3582faB1CeB7923c5D20A0531F722161') as `0x${string}`;
+  '0x23AEAB74BA6fcD126b5EBe2070d6568a9636D9B1') as `0x${string}`;
 
 const CRYPTO_MARKET_BETS_ABI = [
   {
@@ -28,6 +28,8 @@ const CRYPTO_MARKET_BETS_ABI = [
           { internalType: 'int256', name: 'endPrice', type: 'int256' },
           { internalType: 'uint256', name: 'totalUpBets', type: 'uint256' },
           { internalType: 'uint256', name: 'totalDownBets', type: 'uint256' },
+          { internalType: 'uint256', name: 'totalUpBetsEth', type: 'uint256' },
+          { internalType: 'uint256', name: 'totalDownBetsEth', type: 'uint256' },
           { internalType: 'bool', name: 'resolved', type: 'bool' },
           { internalType: 'bool', name: 'priceWentUp', type: 'bool' },
           { internalType: 'uint256', name: 'startTime', type: 'uint256' },
@@ -63,6 +65,7 @@ const CRYPTO_MARKET_BETS_ABI = [
           { internalType: 'uint256', name: 'amount', type: 'uint256' },
           { internalType: 'uint256', name: 'timestamp', type: 'uint256' },
           { internalType: 'bool', name: 'claimed', type: 'bool' },
+          { internalType: 'bool', name: 'isEth', type: 'bool' },
         ],
         internalType: 'struct CryptoMarketBets.CryptoBet[]',
         name: '',
@@ -96,8 +99,19 @@ const CRYPTO_MARKET_BETS_ABI = [
     inputs: [
       { internalType: 'uint256', name: 'predictionId', type: 'uint256' },
       { internalType: 'bool', name: 'direction', type: 'bool' },
+      { internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
     name: 'placePrediction',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint256', name: 'predictionId', type: 'uint256' },
+      { internalType: 'bool', name: 'direction', type: 'bool' },
+    ],
+    name: 'placePredictionWithEth',
     outputs: [],
     stateMutability: 'payable',
     type: 'function',
@@ -208,7 +222,7 @@ export function useCreatePrediction() {
   };
 }
 
-// Hook to place a prediction bet
+// Hook to place a prediction bet (USDC or ETH)
 export function usePlacePredictionBet() {
   const { data: hash, writeContract, isPending, error } = useWriteContract();
 
@@ -216,14 +230,26 @@ export function usePlacePredictionBet() {
     hash,
   });
 
-  const placePredictionBet = (predictionId: number, direction: boolean, amount: string) => {
-    writeContract({
-      address: CRYPTO_MARKET_BETS_ADDRESS,
-      abi: CRYPTO_MARKET_BETS_ABI,
-      functionName: 'placePrediction',
-      args: [BigInt(predictionId), direction],
-      value: parseEther(amount),
-    });
+  const placePredictionBet = (predictionId: number, direction: boolean, amount: string, paymentMethod: 'USDC' | 'ETH' = 'USDC') => {
+    if (paymentMethod === 'ETH') {
+      // ETH bet - send value with transaction
+      writeContract({
+        address: CRYPTO_MARKET_BETS_ADDRESS,
+        abi: CRYPTO_MARKET_BETS_ABI,
+        functionName: 'placePredictionWithEth',
+        args: [BigInt(predictionId), direction],
+        value: parseEther(amount),
+      });
+    } else {
+      // USDC bet - 6 decimals
+      const amountInUnits = BigInt(Math.floor(parseFloat(amount) * 1e6));
+      writeContract({
+        address: CRYPTO_MARKET_BETS_ADDRESS,
+        abi: CRYPTO_MARKET_BETS_ABI,
+        functionName: 'placePrediction',
+        args: [BigInt(predictionId), direction, amountInUnits],
+      });
+    }
   };
 
   return {

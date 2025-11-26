@@ -12,7 +12,7 @@ const raleway = Raleway({
 });
 
 export const metadata: Metadata = {
-  title: "CryptoWager - Decentralized Betting Platform",
+  title: "WagerX - Decentralized Betting Platform",
   description: "Bet smart, win big. The ultimate crypto betting platform on Base chain.",
 };
 

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useMarketCounter, useMarket, useUserBets } from '@/hooks/useBettingContract';
 import { isContractDeployed } from '@/lib/contract';
 import { formatEth, formatDate, shortenAddress } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 function UserMarketBets({ marketId, userAddress }: { marketId: number; userAddress: string }) {
   const { data: market } = useMarket(marketId);
@@ -182,7 +183,13 @@ export default function MyBetsPage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
+          <motion.div
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.2 }}
+            className="flex justify-between items-center mb-8"
+          >
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">
                 My Bets
@@ -197,7 +204,7 @@ export default function MyBetsPage() {
             >
               Browse Markets
             </Link>
-          </div>
+          </motion.div>
 
           <div className="space-y-6">
             {marketIds.length === 0 ? (
@@ -218,7 +225,7 @@ export default function MyBetsPage() {
               </div>
             ) : (
               <>
-                {marketIds.map((id) => (
+                {address && marketIds.map((id) => (
                   <UserMarketBets key={id} marketId={id} userAddress={address} />
                 ))}
               </>

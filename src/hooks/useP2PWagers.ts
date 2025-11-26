@@ -1,9 +1,9 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseEther } from 'viem';
 
-// Deployed on Base Sepolia
+// Deployed on Base Sepolia - ERC-20 USDC version
 const P2P_WAGERS_ADDRESS = (process.env.NEXT_PUBLIC_P2P_WAGERS_CONTRACT_ADDRESS ||
-  '0x996103977d86FC8Ec34DeC34429E0158AAB293E2') as `0x${string}`;
+  '0x196A4bC0255D0703D8B8dCF9a8285B011DFcff7a') as `0x${string}`;
 
 const P2P_WAGERS_ABI = [
   {
@@ -63,17 +63,18 @@ const P2P_WAGERS_ABI = [
       { internalType: 'string', name: 'claim', type: 'string' },
       { internalType: 'address', name: 'resolver', type: 'address' },
       { internalType: 'uint256', name: 'expiryTime', type: 'uint256' },
+      { internalType: 'uint256', name: 'stakeAmount', type: 'uint256' },
     ],
     name: 'createWager',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'payable',
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [{ internalType: 'uint256', name: 'wagerId', type: 'uint256' }],
     name: 'acceptWager',
     outputs: [],
-    stateMutability: 'payable',
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -150,8 +151,7 @@ export function useCreateWager() {
       address: P2P_WAGERS_ADDRESS,
       abi: P2P_WAGERS_ABI,
       functionName: 'createWager',
-      args: [claim, resolver as `0x${string}`, BigInt(expiryTime)],
-      value: parseEther(stakeAmount),
+      args: [claim, resolver as `0x${string}`, BigInt(expiryTime), parseEther(stakeAmount)],
     });
   };
 
@@ -174,12 +174,12 @@ export function useAcceptWager() {
   });
 
   const acceptWager = (wagerId: number, stakeAmount: string) => {
+    // Note: stakeAmount is not passed to the contract - it reads from the wager
     writeContract({
       address: P2P_WAGERS_ADDRESS,
       abi: P2P_WAGERS_ABI,
       functionName: 'acceptWager',
       args: [BigInt(wagerId)],
-      value: parseEther(stakeAmount),
     });
   };
 

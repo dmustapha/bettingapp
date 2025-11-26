@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../hello_rust"
+		},
+		{
+			"path": "../photography-landing"
+		},
+		{
+			"path": "../rust_crash_course"
+		},
+		{
+			"path": "."
+		}
+	]
+}

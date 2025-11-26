@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "./interfaces/IERC20.sol";
+
 /**
  * @title CryptoMarketBets
  * @notice Betting on cryptocurrency price movements
@@ -33,8 +35,10 @@ contract CryptoMarketBets {
         uint256 timeframe; // in seconds
         int256 startPrice;
         int256 endPrice;
-        uint256 totalUpBets;
-        uint256 totalDownBets;
+        uint256 totalUpBets;      // USDC bets
+        uint256 totalDownBets;    // USDC bets
+        uint256 totalUpBetsEth;   // ETH bets
+        uint256 totalDownBetsEth; // ETH bets
         bool resolved;
         bool priceWentUp;
         uint256 startTime;
@@ -48,6 +52,7 @@ contract CryptoMarketBets {
         uint256 amount;
         uint256 timestamp;
         bool claimed;
+        bool isEth; // true = ETH, false = USDC
     }
 
     // ============ State Variables ============
@@ -56,12 +61,10 @@ contract CryptoMarketBets {
     uint256 public platformFeePercent = 2; // 2% platform fee
     address public owner;
     bool public paused;
+    IERC20 public betToken; // ERC-20 token used for betting (e.g., USDC)
 
-    // Supported timeframes in seconds
-    uint256 public constant TIMEFRAME_1H = 3600;
-    uint256 public constant TIMEFRAME_4H = 14400;
-    uint256 public constant TIMEFRAME_24H = 86400;
-    uint256 public constant TIMEFRAME_7D = 604800;
+    // Minimum timeframe in seconds
+    uint256 public constant MIN_TIMEFRAME = 10;
 
     mapping(uint256 => Prediction) public predictions;
     mapping(uint256 => mapping(address => CryptoBet[])) public userBets;
@@ -119,20 +122,16 @@ contract CryptoMarketBets {
     }
 
     modifier validTimeframe(uint256 timeframe) {
-        require(
-            timeframe == TIMEFRAME_1H ||
-            timeframe == TIMEFRAME_4H ||
-            timeframe == TIMEFRAME_24H ||
-            timeframe == TIMEFRAME_7D,
-            "Invalid timeframe"
-        );
+        require(timeframe >= MIN_TIMEFRAME, "Timeframe too short");
         _;
     }
 
     // ============ Constructor ============
 
-    constructor() {
+    constructor(address _betToken) {
+        require(_betToken != address(0), "Invalid token address");
         owner = msg.sender;
+        betToken = IERC20(_betToken);
     }
 
     // ============ Price Feed Management ============
@@ -193,6 +192,8 @@ contract CryptoMarketBets {
             endPrice: 0,
             totalUpBets: 0,
             totalDownBets: 0,
+            totalUpBetsEth: 0,
+            totalDownBetsEth: 0,
             resolved: false,
             priceWentUp: false,
             startTime: block.timestamp,
@@ -211,8 +212,52 @@ contract CryptoMarketBets {
      * @notice Place a prediction bet
      * @param predictionId The prediction to bet on
      * @param direction true for UP, false for DOWN
+     * @param amount Amount of tokens to bet
      */
     function placePrediction(
+        uint256 predictionId,
+        bool direction,
+        uint256 amount
+    ) external whenNotPaused predictionExists(predictionId) {
+        Prediction storage prediction = predictions[predictionId];
+
+        require(block.timestamp < prediction.endTime, "Prediction closed");
+        require(!prediction.resolved, "Prediction already resolved");
+        require(amount > 0, "Bet amount must be greater than 0");
+
+        // Transfer tokens from user to contract
+        require(
+            betToken.transferFrom(msg.sender, address(this), amount),
+            "Token transfer failed"
+        );
+
+        // Update prediction totals
+        if (direction) {
+            prediction.totalUpBets += amount;
+        } else {
+            prediction.totalDownBets += amount;
+        }
+
+        // Record user bet
+        userBets[predictionId][msg.sender].push(CryptoBet({
+            predictionId: predictionId,
+            bettor: msg.sender,
+            direction: direction,
+            amount: amount,
+            timestamp: block.timestamp,
+            claimed: false,
+            isEth: false
+        }));
+
+        emit BetPlaced(predictionId, msg.sender, direction, amount);
+    }
+
+    /**
+     * @notice Place a prediction bet with ETH
+     * @param predictionId The prediction to bet on
+     * @param direction true for UP, false for DOWN
+     */
+    function placePredictionWithEth(
         uint256 predictionId,
         bool direction
     ) external payable whenNotPaused predictionExists(predictionId) {
@@ -222,11 +267,11 @@ contract CryptoMarketBets {
         require(!prediction.resolved, "Prediction already resolved");
         require(msg.value > 0, "Bet amount must be greater than 0");
 
-        // Update prediction totals
+        // Update prediction totals for ETH
         if (direction) {
-            prediction.totalUpBets += msg.value;
+            prediction.totalUpBetsEth += msg.value;
         } else {
-            prediction.totalDownBets += msg.value;
+            prediction.totalDownBetsEth += msg.value;
         }
 
         // Record user bet
@@ -236,7 +281,8 @@ contract CryptoMarketBets {
             direction: direction,
             amount: msg.value,
             timestamp: block.timestamp,
-            claimed: false
+            claimed: false,
+            isEth: true
         }));
 
         emit BetPlaced(predictionId, msg.sender, direction, msg.value);
@@ -277,29 +323,45 @@ contract CryptoMarketBets {
         CryptoBet[] storage bets = userBets[predictionId][msg.sender];
         require(bets.length > 0, "No bets placed");
 
-        uint256 totalPayout = 0;
+        uint256 totalPayoutUsdc = 0;
+        uint256 totalPayoutEth = 0;
 
         for (uint256 i = 0; i < bets.length; i++) {
             if (!bets[i].claimed && bets[i].direction == prediction.priceWentUp) {
-                uint256 payout = calculatePayout(predictionId, bets[i].amount, bets[i].direction);
-                totalPayout += payout;
+                if (bets[i].isEth) {
+                    uint256 payout = calculatePayoutEth(predictionId, bets[i].amount, bets[i].direction);
+                    totalPayoutEth += payout;
+                } else {
+                    uint256 payout = calculatePayout(predictionId, bets[i].amount, bets[i].direction);
+                    totalPayoutUsdc += payout;
+                }
                 bets[i].claimed = true;
             }
         }
 
-        require(totalPayout > 0, "No winnings to claim");
+        require(totalPayoutUsdc > 0 || totalPayoutEth > 0, "No winnings to claim");
 
-        // Transfer winnings
-        (bool success, ) = msg.sender.call{value: totalPayout}("");
-        require(success, "Transfer failed");
+        // Transfer USDC winnings
+        if (totalPayoutUsdc > 0) {
+            require(
+                betToken.transfer(msg.sender, totalPayoutUsdc),
+                "Token transfer failed"
+            );
+        }
 
-        emit WinningsClaimed(predictionId, msg.sender, totalPayout);
+        // Transfer ETH winnings
+        if (totalPayoutEth > 0) {
+            (bool success, ) = payable(msg.sender).call{value: totalPayoutEth}("");
+            require(success, "ETH transfer failed");
+        }
+
+        emit WinningsClaimed(predictionId, msg.sender, totalPayoutUsdc + totalPayoutEth);
     }
 
     // ============ View Functions ============
 
     /**
-     * @notice Calculate payout for a winning bet
+     * @notice Calculate payout for a winning USDC bet
      * @param predictionId The prediction ID
      * @param betAmount The bet amount
      * @param direction The bet direction
@@ -313,6 +375,31 @@ contract CryptoMarketBets {
 
         uint256 totalPool = prediction.totalUpBets + prediction.totalDownBets;
         uint256 winningPool = direction ? prediction.totalUpBets : prediction.totalDownBets;
+
+        if (winningPool == 0) return 0;
+
+        // Calculate payout: (betAmount / winningPool) * totalPool * (100 - fee) / 100
+        uint256 poolShare = (betAmount * totalPool) / winningPool;
+        uint256 fee = (poolShare * platformFeePercent) / 100;
+
+        return poolShare - fee;
+    }
+
+    /**
+     * @notice Calculate payout for a winning ETH bet
+     * @param predictionId The prediction ID
+     * @param betAmount The bet amount
+     * @param direction The bet direction
+     */
+    function calculatePayoutEth(
+        uint256 predictionId,
+        uint256 betAmount,
+        bool direction
+    ) public view returns (uint256) {
+        Prediction storage prediction = predictions[predictionId];
+
+        uint256 totalPool = prediction.totalUpBetsEth + prediction.totalDownBetsEth;
+        uint256 winningPool = direction ? prediction.totalUpBetsEth : prediction.totalDownBetsEth;
 
         if (winningPool == 0) return 0;
 
@@ -377,11 +464,27 @@ contract CryptoMarketBets {
     }
 
     /**
-     * @notice Withdraw collected fees
+     * @notice Withdraw collected USDC fees
      */
     function withdrawFees() external onlyOwner {
-        uint256 balance = address(this).balance;
-        (bool success, ) = owner.call{value: balance}("");
-        require(success, "Transfer failed");
+        uint256 balance = betToken.balanceOf(address(this));
+        require(balance > 0, "No fees to withdraw");
+        require(
+            betToken.transfer(owner, balance),
+            "Token transfer failed"
+        );
     }
+
+    /**
+     * @notice Withdraw collected ETH fees
+     */
+    function withdrawEthFees() external onlyOwner {
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No ETH fees to withdraw");
+        (bool success, ) = payable(owner).call{value: balance}("");
+        require(success, "ETH transfer failed");
+    }
+
+    // Allow contract to receive ETH
+    receive() external payable {}
 }

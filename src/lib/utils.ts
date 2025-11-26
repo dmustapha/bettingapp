@@ -1,9 +1,16 @@
-import { formatEther } from 'viem';
+import { formatEther, formatUnits } from 'viem';
 
 // Format ETH amount
 export function formatEth(value: bigint | undefined, decimals: number = 4): string {
   if (!value) return '0';
   const formatted = formatEther(value);
+  return parseFloat(formatted).toFixed(decimals);
+}
+
+// Format USDC amount (6 decimals)
+export function formatUsdc(value: bigint | undefined, decimals: number = 2): string {
+  if (!value) return '0';
+  const formatted = formatUnits(value, 6); // USDC has 6 decimals
   return parseFloat(formatted).toFixed(decimals);
 }
 
@@ -42,7 +49,8 @@ export function getTimeRemaining(endTime: bigint): string {
 }
 
 // Shorten address
-export function shortenAddress(address: string): string {
+export function shortenAddress(address: string | undefined): string {
+  if (!address) return '0x0000...0000';
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 

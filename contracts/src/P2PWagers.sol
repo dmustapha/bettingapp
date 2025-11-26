@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "./interfaces/IERC20.sol";
+
 /**
  * @title P2PWagers
  * @notice Peer-to-peer betting contract for personal wagers
  * @dev Allows two users to bet against each other with a designated resolver
  */
+
 contract P2PWagers {
     // ============ Structs ============
 
@@ -21,6 +24,7 @@ contract P2PWagers {
         uint256 createdAt;
         uint256 expiryTime;
         bool accepted;
+        bool isEth; // true = ETH, false = USDC
     }
 
     // ============ State Variables ============
@@ -29,6 +33,7 @@ contract P2PWagers {
     uint256 public platformFeePercent = 2; // 2% platform fee
     address public owner;
     bool public paused;
+    IERC20 public betToken; // ERC-20 token used for betting (e.g., USDC)
 
     mapping(uint256 => Wager) public wagers;
     mapping(address => uint256) public userWins;
@@ -84,8 +89,10 @@ contract P2PWagers {
 
     // ============ Constructor ============
 
-    constructor() {
+    constructor(address _betToken) {
+        require(_betToken != address(0), "Invalid token address");
         owner = msg.sender;
+        betToken = IERC20(_betToken);
     }
 
     // ============ Wager Creation ============
@@ -95,8 +102,56 @@ contract P2PWagers {
      * @param claim The claim or argument being wagered on
      * @param resolver Address that will resolve the wager
      * @param expiryTime Unix timestamp when wager expires if not accepted
+     * @param stakeAmount Amount of tokens to stake
      */
     function createWager(
+        string memory claim,
+        address resolver,
+        uint256 expiryTime,
+        uint256 stakeAmount
+    ) external whenNotPaused returns (uint256) {
+        require(stakeAmount > 0, "Stake amount must be greater than 0");
+        require(bytes(claim).length > 0, "Claim required");
+        require(resolver != address(0), "Resolver required");
+        require(resolver != msg.sender, "Cannot be own resolver");
+        require(expiryTime > block.timestamp, "Expiry time must be in future");
+
+        // Transfer tokens from user to contract
+        require(
+            betToken.transferFrom(msg.sender, address(this), stakeAmount),
+            "Token transfer failed"
+        );
+
+        uint256 wagerId = wagerCounter;
+
+        wagers[wagerId] = Wager({
+            id: wagerId,
+            userA: msg.sender,
+            userB: address(0),
+            stakeAmount: stakeAmount,
+            claim: claim,
+            resolver: resolver,
+            resolved: false,
+            winner: address(0),
+            createdAt: block.timestamp,
+            expiryTime: expiryTime,
+            accepted: false,
+            isEth: false
+        });
+
+        wagerCounter++;
+
+        emit WagerCreated(wagerId, msg.sender, claim, stakeAmount, resolver, expiryTime);
+        return wagerId;
+    }
+
+    /**
+     * @notice Create a new peer-to-peer wager with ETH
+     * @param claim The claim or argument being wagered on
+     * @param resolver Address that will resolve the wager
+     * @param expiryTime Unix timestamp when wager expires if not accepted
+     */
+    function createWagerWithEth(
         string memory claim,
         address resolver,
         uint256 expiryTime
@@ -120,7 +175,8 @@ contract P2PWagers {
             winner: address(0),
             createdAt: block.timestamp,
             expiryTime: expiryTime,
-            accepted: false
+            accepted: false,
+            isEth: true
         });
 
         wagerCounter++;
@@ -132,10 +188,10 @@ contract P2PWagers {
     // ============ Wager Acceptance ============
 
     /**
-     * @notice Accept an open wager by matching the stake
+     * @notice Accept an open USDC wager by matching the stake
      * @param wagerId The wager ID to accept
      */
-    function acceptWager(uint256 wagerId) external payable whenNotPaused wagerExists(wagerId) {
+    function acceptWager(uint256 wagerId) external whenNotPaused wagerExists(wagerId) {
         Wager storage wager = wagers[wagerId];
 
         require(!wager.accepted, "Wager already accepted");
@@ -143,6 +199,33 @@ contract P2PWagers {
         require(block.timestamp < wager.expiryTime, "Wager expired");
         require(msg.sender != wager.userA, "Cannot accept own wager");
         require(msg.sender != wager.resolver, "Resolver cannot accept");
+        require(!wager.isEth, "Use acceptWagerWithEth for ETH wagers");
+
+        // Transfer tokens from user to contract
+        require(
+            betToken.transferFrom(msg.sender, address(this), wager.stakeAmount),
+            "Token transfer failed"
+        );
+
+        wager.userB = msg.sender;
+        wager.accepted = true;
+
+        emit WagerAccepted(wagerId, msg.sender);
+    }
+
+    /**
+     * @notice Accept an open ETH wager by matching the stake
+     * @param wagerId The wager ID to accept
+     */
+    function acceptWagerWithEth(uint256 wagerId) external payable whenNotPaused wagerExists(wagerId) {
+        Wager storage wager = wagers[wagerId];
+
+        require(!wager.accepted, "Wager already accepted");
+        require(!wager.resolved, "Wager already resolved");
+        require(block.timestamp < wager.expiryTime, "Wager expired");
+        require(msg.sender != wager.userA, "Cannot accept own wager");
+        require(msg.sender != wager.resolver, "Resolver cannot accept");
+        require(wager.isEth, "Use acceptWager for USDC wagers");
         require(msg.value == wager.stakeAmount, "Must match stake amount");
 
         wager.userB = msg.sender;
@@ -187,8 +270,15 @@ contract P2PWagers {
         uint256 payout = totalStake - fee;
 
         // Transfer winnings to winner
-        (bool success, ) = winner.call{value: payout}("");
-        require(success, "Transfer failed");
+        if (wager.isEth) {
+            (bool success, ) = payable(winner).call{value: payout}("");
+            require(success, "ETH transfer failed");
+        } else {
+            require(
+                betToken.transfer(winner, payout),
+                "Token transfer failed"
+            );
+        }
 
         emit WagerResolved(wagerId, winner);
         emit WinningsClaimed(wagerId, winner, payout);
@@ -209,8 +299,15 @@ contract P2PWagers {
         require(msg.sender == wager.userA, "Only creator can cancel");
 
         // Refund stake to userA
-        (bool success, ) = wager.userA.call{value: wager.stakeAmount}("");
-        require(success, "Refund failed");
+        if (wager.isEth) {
+            (bool success, ) = payable(wager.userA).call{value: wager.stakeAmount}("");
+            require(success, "ETH transfer failed");
+        } else {
+            require(
+                betToken.transfer(wager.userA, wager.stakeAmount),
+                "Token transfer failed"
+            );
+        }
 
         wager.resolved = true;
         emit WagerCancelled(wagerId);
@@ -253,11 +350,27 @@ contract P2PWagers {
     }
 
     /**
-     * @notice Withdraw collected fees
+     * @notice Withdraw collected USDC fees
      */
     function withdrawFees() external onlyOwner {
-        uint256 balance = address(this).balance;
-        (bool success, ) = owner.call{value: balance}("");
-        require(success, "Transfer failed");
+        uint256 balance = betToken.balanceOf(address(this));
+        require(balance > 0, "No fees to withdraw");
+        require(
+            betToken.transfer(owner, balance),
+            "Token transfer failed"
+        );
     }
+
+    /**
+     * @notice Withdraw collected ETH fees
+     */
+    function withdrawEthFees() external onlyOwner {
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No ETH fees to withdraw");
+        (bool success, ) = payable(owner).call{value: balance}("");
+        require(success, "ETH transfer failed");
+    }
+
+    // Allow contract to receive ETH
+    receive() external payable {}
 }

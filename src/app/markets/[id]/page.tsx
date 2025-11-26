@@ -123,9 +123,6 @@ export default function MarketDetailPage() {
             <div className="flex items-start justify-between mb-6">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className={`px-3 py-1 rounded text-sm font-semibold ${categoryColors[market.category] || categoryColors.Custom}`}>
-                    {market.category}
-                  </span>
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     market.resolved
                       ? 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
