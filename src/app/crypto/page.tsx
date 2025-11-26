@@ -12,9 +12,9 @@ import {
   usePlacePredictionBet,
   useUserPredictionBets,
   useClaimPredictionWinnings,
-  FEATURED_TOKENS,
   TIMEFRAMES,
 } from '@/hooks/useCryptoMarketBets';
+import { getFeaturedTokensWithPriceFeeds } from '@/config/tokens.config';
 import { useCoinGeckoPrice } from '@/hooks/useCoinGeckoPrice';
 import { MainNav } from '@/components/layout/MainNav';
 import { Footer } from '@/components';
@@ -137,7 +137,7 @@ function TokenDetailsModal({
 }
 
 // Quick Market Betting Card Component
-function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[0]; onViewDetails: () => void }) {
+function QuickBetCard({ token, onViewDetails }: { token: ReturnType<typeof getFeaturedTokensWithPriceFeeds>[0]; onViewDetails: () => void }) {
   const { isConnected } = useAccount();
   const [betAmount, setBetAmount] = useState('0.01');
   const [selectedDirection, setSelectedDirection] = useState<'up' | 'down' | null>(null);
@@ -1371,7 +1371,7 @@ export default function CryptoPredictionsPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {FEATURED_TOKENS.map((token) => (
+            {getFeaturedTokensWithPriceFeeds().map((token) => (
               <QuickBetCard
                 key={token.symbol}
                 token={token}

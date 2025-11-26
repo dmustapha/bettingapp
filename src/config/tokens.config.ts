@@ -359,6 +359,14 @@ export function getFeaturedTokens(): TokenConfig[] {
 }
 
 /**
+ * Get featured tokens that have Chainlink price feeds for betting
+ * Only these tokens can be used for Market Betting
+ */
+export function getFeaturedTokensWithPriceFeeds(): TokenConfig[] {
+  return Object.values(TOKENS).filter((token) => token.featured && token.chainlinkPriceFeed);
+}
+
+/**
  * Check if a token has a working Chainlink price feed on Base Sepolia
  */
 export function hasChainlinkFeed(symbol: string): boolean {
