@@ -64,8 +64,9 @@ export const config = createConfig({
   connectors,
   chains: [baseSepolia, base],
   transports: {
-    [baseSepolia.id]: http(),
-    [base.id]: http(),
+    // Use public RPC endpoints with fallbacks
+    [baseSepolia.id]: http('https://base-sepolia-rpc.publicnode.com'),
+    [base.id]: http('https://mainnet.base.org'),
   },
   ssr: true,
 });

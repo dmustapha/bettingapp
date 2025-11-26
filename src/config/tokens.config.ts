@@ -80,6 +80,21 @@ export const TOKENS: Record<string, TokenConfig> = {
     minBetAmount: '0.001',
   },
 
+  BTC: {
+    symbol: 'BTC',
+    name: 'Bitcoin',
+    decimals: 8,
+    icon: 'https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=029',
+    category: 'Wrapped',
+    contractAddress: '0x0000000000000000000000000000000000000000', // Placeholder - use cbBTC for actual trading
+    chainlinkPriceFeed: '0x0FB99723Aee6f420beAD13e6bBB79b7E6F034298', // BTC/USD on Base Sepolia
+    coingeckoId: 'bitcoin',
+    color: '#F7931A',
+    description: 'The original cryptocurrency - predict BTC price movements',
+    minBetAmount: '0.0001',
+    featured: true,
+  },
+
   // ============ STABLECOINS ============
 
   USDC: {
@@ -333,7 +348,7 @@ export function getTokensByCategory(category: TokenConfig['category']): TokenCon
  * Tokens with working Chainlink price feeds on Base Sepolia
  * These are the only tokens with registered and working price feeds on the testnet contract
  */
-const BASE_SEPOLIA_WORKING_FEEDS = ['ETH', 'cbBTC'];
+const BASE_SEPOLIA_WORKING_FEEDS = ['ETH', 'BTC', 'cbBTC'];
 
 /**
  * Get featured tokens (only those with working price feeds on Base Sepolia)

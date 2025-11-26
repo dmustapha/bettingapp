@@ -66,7 +66,8 @@
       "Bash(vercel:*)",
       "Bash(for token in ETH BTC cbETH USDC DAI WETH)",
       "Bash(do)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(cast:*)"
     ],
     "deny": [],
     "ask": []

@@ -169,6 +169,11 @@ export function useCurrentPrice(tokenSymbol: string) {
     abi: CRYPTO_MARKET_BETS_ABI,
     functionName: 'getCurrentPrice',
     args: [tokenSymbol],
+    chainId: 84532, // Base Sepolia
+    query: {
+      refetchInterval: 10000, // Refetch every 10 seconds
+      retry: 3,
+    },
   });
 }
 
