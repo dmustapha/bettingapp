@@ -15,6 +15,8 @@ import {
   FEATURED_TOKENS,
   TIMEFRAMES,
 } from '@/hooks/useCryptoMarketBets';
+import { useCoinGeckoPrice } from '@/hooks/useCoinGeckoPrice';
+import { hasChainlinkFeed } from '@/config/tokens.config';
 import { MainNav } from '@/components/layout/MainNav';
 import { Footer } from '@/components';
 import { TokenToggle } from '@/components/TokenSelector';
@@ -38,12 +40,11 @@ function TokenDetailsModal({
   icon: string;
   onClose: () => void;
 }) {
-  const { data: price } = useCurrentPrice(symbol);
+  const { data: coinGeckoPrice } = useCoinGeckoPrice(symbol);
 
-  const formatPrice = (price: bigint | undefined) => {
+  const formatPrice = (price: number | undefined) => {
     if (!price) return '---';
-    const priceNum = Number(price) / 1e8;
-    return priceNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   const tokenDescriptions: Record<string, string> = {
@@ -91,7 +92,12 @@ function TokenDetailsModal({
           {/* Price Info */}
           <div className="bg-brand-bg-secondary rounded-xl p-6 border border-brand-purple-900/30">
             <div className="text-sm text-gray-400 mb-1">Current Price</div>
-            <div className="text-4xl font-bold text-white">${formatPrice(price)}</div>
+            <div className="text-4xl font-bold text-white">${formatPrice(coinGeckoPrice?.currentPrice)}</div>
+            {coinGeckoPrice?.priceChangePercentage24h !== undefined && (
+              <div className={`text-sm mt-1 ${coinGeckoPrice.priceChangePercentage24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {coinGeckoPrice.priceChangePercentage24h >= 0 ? '+' : ''}{coinGeckoPrice.priceChangePercentage24h.toFixed(2)}% (24h)
+              </div>
+            )}
             <div className="text-sm text-gray-400 mt-2">{tokenDescriptions[symbol] || 'Digital asset'}</div>
           </div>
 
@@ -140,7 +146,8 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
   const [customTime, setCustomTime] = useState('1');
   const [customTimeUnit, setCustomTimeUnit] = useState<'s' | 'm' | 'h'>('m');
   const [showBetConfig, setShowBetConfig] = useState(false);
-  const { data: currentPrice } = useCurrentPrice(token.symbol);
+  // Use CoinGecko for display price
+  const { data: coinGeckoPrice } = useCoinGeckoPrice(token.symbol);
   const { createPrediction, isPending: isCreatingPrediction, isSuccess: isCreateSuccess } = useCreatePrediction();
   const { placePredictionBet, isPending: isPlacingBet, isSuccess: isPlaceSuccess } = usePlacePredictionBet();
   const { data: predictionCounter, refetch: refetchCounter } = usePredictionCounter();
@@ -148,10 +155,12 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
   const [counterBeforeCreate, setCounterBeforeCreate] = useState<number | null>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  const formatPrice = (price: bigint | undefined) => {
+  // Check if this token has Chainlink support for betting
+  const canBet = hasChainlinkFeed(token.symbol);
+
+  const formatPrice = (price: number | undefined) => {
     if (!price) return '---';
-    const priceNum = Number(price) / 1e8;
-    return priceNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   const getTimeframeSeconds = () => {
@@ -275,15 +284,26 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
           </div>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-bold text-white">${formatPrice(currentPrice)}</div>
-          <div className="text-xs text-gray-400">Current Price</div>
+          <div className="text-2xl font-bold text-white">${formatPrice(coinGeckoPrice?.currentPrice)}</div>
+          {coinGeckoPrice?.priceChangePercentage24h !== undefined && (
+            <div className={`text-xs ${coinGeckoPrice.priceChangePercentage24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {coinGeckoPrice.priceChangePercentage24h >= 0 ? '+' : ''}{coinGeckoPrice.priceChangePercentage24h.toFixed(2)}%
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Show badge if token doesn't support betting */}
+      {!canBet && (
+        <div className="mb-4 px-3 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+          <p className="text-xs text-yellow-400 text-center">Price display only - betting not available on testnet</p>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3 mb-4">
         <button
           onClick={() => handleDirectionSelect('up')}
-          disabled={!isConnected || showBetConfig}
+          disabled={!isConnected || showBetConfig || !canBet}
           className={`py-4 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 ${
             selectedDirection === 'up'
               ? 'bg-brand-success border-2 border-brand-success text-white shadow-lg'
@@ -295,7 +315,7 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
         </button>
         <button
           onClick={() => handleDirectionSelect('down')}
-          disabled={!isConnected || showBetConfig}
+          disabled={!isConnected || showBetConfig || !canBet}
           className={`py-4 rounded-xl font-bold transition-all transform hover:-translate-y-0.5 ${
             selectedDirection === 'down'
               ? 'bg-brand-error border-2 border-brand-error text-white shadow-lg'
@@ -420,7 +440,7 @@ function QuickBetCard({ token, onViewDetails }: { token: typeof FEATURED_TOKENS[
 
       {!showBetConfig && (
         <div className="text-xs text-center text-gray-400">
-          {isConnected ? 'Click Bull or Bear to start!' : 'Connect wallet to start'}
+          {!canBet ? 'View price only' : isConnected ? 'Click Bull or Bear to start!' : 'Connect wallet to start'}
         </div>
       )}
     </div>
@@ -439,7 +459,9 @@ function CustomTokenSearch({ onViewDetails }: { onViewDetails: (token: { symbol:
   const [selectedToken, setSelectedToken] = useState<string>('ETH');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const { data: currentPrice } = useCurrentPrice(selectedToken);
+  // Use CoinGecko for display price
+  const { data: coinGeckoPrice } = useCoinGeckoPrice(selectedToken);
+  const canBet = hasChainlinkFeed(selectedToken);
 
   // Timeframe state
   const [selectedTimeframe, setSelectedTimeframe] = useState<'15s' | '30s' | '1m' | '5m' | '15m' | '1h' | '4h' | '24h' | 'custom'>('15s');
@@ -453,10 +475,9 @@ function CustomTokenSearch({ onViewDetails }: { onViewDetails: (token: { symbol:
   const [counterBeforeCreate, setCounterBeforeCreate] = useState<number | null>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  const formatPrice = (price: bigint | undefined) => {
+  const formatPrice = (price: number | undefined) => {
     if (!price) return '---';
-    const priceNum = Number(price) / 1e8;
-    return priceNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   // Calculate timeframe in seconds
@@ -672,10 +693,18 @@ function CustomTokenSearch({ onViewDetails }: { onViewDetails: (token: { symbol:
               <div>
                 <div className="text-sm text-gray-400">Selected Token</div>
                 <div className="text-2xl font-bold text-white">{selectedToken}</div>
+                {!canBet && (
+                  <div className="text-xs text-yellow-400 mt-1">⚠️ Betting not available on testnet</div>
+                )}
               </div>
               <div className="text-right">
                 <div className="text-sm text-gray-400">Current Price</div>
-                <div className="text-2xl font-bold text-white">${formatPrice(currentPrice)}</div>
+                <div className="text-2xl font-bold text-white">${formatPrice(coinGeckoPrice?.currentPrice)}</div>
+                {coinGeckoPrice?.priceChangePercentage24h !== undefined && (
+                  <div className={`text-xs ${coinGeckoPrice.priceChangePercentage24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {coinGeckoPrice.priceChangePercentage24h >= 0 ? '+' : ''}{coinGeckoPrice.priceChangePercentage24h.toFixed(2)}%
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -798,10 +827,12 @@ function CustomTokenSearch({ onViewDetails }: { onViewDetails: (token: { symbol:
           {/* Place Bet Button */}
           <button
             onClick={handlePlaceBet}
-            disabled={!selectedDirection || isCreatingPrediction || isPlacingBet || showSuccessMessage}
+            disabled={!selectedDirection || isCreatingPrediction || isPlacingBet || showSuccessMessage || !canBet}
             className="w-full bg-gradient-primary hover:shadow-glow-primary text-white font-bold py-4 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
           >
-            {isCreatingPrediction || isPlacingBet ? (
+            {!canBet ? (
+              '⚠️ Betting not available for this token on testnet'
+            ) : isCreatingPrediction || isPlacingBet ? (
               <span className="flex items-center justify-center gap-2">
                 <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
