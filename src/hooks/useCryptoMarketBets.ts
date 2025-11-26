@@ -4,7 +4,7 @@ import TOKENS, { getFeaturedTokens, getAllTokenSymbols } from '@/config/tokens.c
 
 // Deployed on Base Sepolia - ERC-20 USDC + ETH version with flexible timeframes
 const CRYPTO_MARKET_BETS_ADDRESS = (process.env.NEXT_PUBLIC_CRYPTO_MARKET_BETS_CONTRACT_ADDRESS ||
-  '0x23AEAB74BA6fcD126b5EBe2070d6568a9636D9B1') as `0x${string}`;
+  '0x65328b5E7151d2AA62703756bcD2CC0Bd4960E34') as `0x${string}`;
 
 const CRYPTO_MARKET_BETS_ABI = [
   {
