@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { WagerXLogo } from '@/components/Logo';
 
 export function MainNav() {
   const pathname = usePathname();
@@ -14,11 +15,9 @@ export function MainNav() {
       <div className="container mx-auto px-4 lg:px-6 py-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-8">
-            <Link href="/markets" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <div className="w-10 h-10 rounded-xl bg-gradient-purple flex items-center justify-center font-bold text-xl text-white shadow-glow-purple">
-                B
-              </div>
-              <span className="text-2xl font-bold text-white">CryptoWager</span>
+            <Link href="/markets" className="flex items-center gap-3 hover:opacity-80 transition-opacity group">
+              <WagerXLogo className="w-10 h-10 transition-transform group-hover:scale-110" />
+              <span className="text-2xl font-bold text-white">WagerX</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-8">
@@ -51,6 +50,16 @@ export function MainNav() {
                 }`}
               >
                 Market Betting
+              </Link>
+              <Link
+                href="/leaderboard"
+                className={`font-medium transition-colors ${
+                  isActive('/leaderboard')
+                    ? 'text-brand-purple-400'
+                    : 'text-gray-300 hover:text-white'
+                }`}
+              >
+                🏆 Leaderboard
               </Link>
             </nav>
           </div>
@@ -89,6 +98,16 @@ export function MainNav() {
             }`}
           >
             Market Betting
+          </Link>
+          <Link
+            href="/leaderboard"
+            className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
+              isActive('/leaderboard')
+                ? 'bg-gradient-purple text-white shadow-glow-purple'
+                : 'bg-brand-bg-secondary text-gray-300 hover:bg-brand-bg-tertiary'
+            }`}
+          >
+            🏆 Leaderboard
           </Link>
         </nav>
       </div>
