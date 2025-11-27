@@ -53,7 +53,22 @@ export function usePriceHistory(
   }, [symbol, timeframe, useOHLC]);
 
   useEffect(() => {
+    let mounted = true;
+
+    // Initial fetch
     fetchHistory();
+
+    // Refetch every 30 seconds to keep chart data live
+    const interval = setInterval(() => {
+      if (mounted) {
+        fetchHistory();
+      }
+    }, 30000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
   }, [fetchHistory]);
 
   return { history, loading, error, refetch: fetchHistory };
